@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { marked } from 'marked'; // IMPORTANTE: instalar com npm install marked
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import WhatsAppButton from '../components/WhatsAppButton';
@@ -55,18 +56,14 @@ export default function Post() {
     return { data, content: match[2] };
   }
 
-  // Função para formatar o conteúdo em parágrafos
-  function formatContent(content) {
-    return content.split('\n\n').map((paragraph, index) => (
-      <p key={index} className="mb-6 text-gray-700 leading-relaxed">
-        {paragraph.split('\n').map((line, i) => (
-          <span key={i}>
-            {line}
-            {i < paragraph.split('\n').length - 1 && <br />}
-          </span>
-        ))}
-      </p>
-    ));
+  // CORRIGIDO: Converter Markdown para HTML
+  function renderMarkdown(content) {
+    if (!content) return '';
+    marked.setOptions({
+      breaks: true, // Quebras de linha viram <br>
+      gfm: true, // GitHub Flavored Markdown
+    });
+    return marked.parse(content);
   }
 
   if (loading) {
@@ -123,35 +120,34 @@ export default function Post() {
           </Link>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-fadeInUp">
-            {post.data.title}
+            {post.data.title || 'Sem título'}
           </h1>
 
-          {/* Meta informações */}
+          {/* Meta informações - CORRIGIDO: só mostra se existir */}
           <div className="flex flex-wrap items-center gap-6 text-white/80 animate-fadeInUp delay-200">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">📅</span>
-              <span>{new Date(post.data.date).toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric'
-              })}</span>
-            </div>
+            {post.data.date && (
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">📅</span>
+                <span>{new Date(post.data.date).toLocaleDateString('pt-BR', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric'
+                })}</span>
+              </div>
+            )}
             
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🏷️</span>
-              <span className="bg-accent/20 text-accent px-3 py-1 rounded-full">
-                {post.data.category || 'Direito'}
-              </span>
-            </div>
+            {post.data.category && (
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🏷️</span>
+                <span className="bg-accent/20 text-accent px-3 py-1 rounded-full">
+                  {post.data.category}
+                </span>
+              </div>
+            )}
 
             <div className="flex items-center gap-2">
               <span className="text-2xl">👤</span>
               <span>{post.data.author || 'Dr. Carlos Silva'}</span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">⏱️</span>
-              <span>5 min de leitura</span>
             </div>
           </div>
         </div>
@@ -164,7 +160,7 @@ export default function Post() {
             <div className="rounded-2xl overflow-hidden shadow-2xl">
               <img
                 src={post.data.image}
-                alt={post.data.title}
+                alt={post.data.title || 'Artigo'}
                 className="w-full h-auto max-h-[500px] object-cover"
               />
             </div>
@@ -185,98 +181,24 @@ export default function Post() {
               </div>
             )}
 
-            {/* Conteúdo principal */}
-            <article className="prose prose-lg max-w-none">
-              {formatContent(post.content)}
-            </article>
+            {/* Conteúdo principal - CORRIGIDO: usa Markdown */}
+            <article 
+              className="prose prose-lg max-w-none prose-headings:text-primary prose-a:text-accent hover:prose-a:text-primary"
+              dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }}
+            />
 
-            {/* Tags */}
-            {post.data.tags && post.data.tags.length > 0 && (
-              <div className="mt-12 pt-8 border-t border-gray-200">
-                <h3 className="text-lg font-semibold text-primary mb-4">Tags:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {post.data.tags.map(tag => (
-                    <span
-                      key={tag}
-                      className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-accent hover:text-primary transition cursor-pointer"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Compartilhamento */}
+            {/* Navegação entre posts - CORRIGIDO: removeu próximo artigo */}
             <div className="mt-12 pt-8 border-t border-gray-200">
-              <h3 className="text-lg font-semibold text-primary mb-4">Compartilhe:</h3>
-              <div className="flex gap-3">
-                {[
-                  { icon: "📘", label: "Facebook", color: "hover:bg-blue-600" },
-                  { icon: "🐦", label: "Twitter", color: "hover:bg-blue-400" },
-                  { icon: "💼", label: "LinkedIn", color: "hover:bg-blue-700" },
-                  { icon: "📱", label: "WhatsApp", color: "hover:bg-green-500" }
-                ].map((social, index) => (
-                  <button
-                    key={index}
-                    className={`w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-xl hover:text-white hover:scale-110 transition-all ${social.color}`}
-                    title={social.label}
-                  >
-                    {social.icon}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Navegação entre posts */}
-            <div className="mt-12 pt-8 border-t border-gray-200 flex justify-between">
               <Link
                 to="/blog"
-                className="flex items-center gap-2 text-gray-600 hover:text-accent transition group"
+                className="inline-flex items-center gap-2 text-gray-600 hover:text-accent transition group"
               >
                 <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Todos os artigos
-              </Link>
-              
-              <Link
-                to="#"
-                className="flex items-center gap-2 text-gray-600 hover:text-accent transition group"
-              >
-                Próximo artigo
-                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
+                ← Voltar para todos os artigos
               </Link>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Seção de newsletter */}
-      <section className="py-16 bg-gray-50">
-        <div className="container-custom">
-          <div className="max-w-2xl mx-auto text-center">
-            <h3 className="text-3xl font-bold text-primary mb-4">
-              Receba novos artigos
-            </h3>
-            <p className="text-gray-600 mb-8">
-              Cadastre-se para receber notificações quando publicarmos novos conteúdos.
-            </p>
-            <form className="flex flex-col sm:flex-row gap-4">
-              <input
-                type="email"
-                placeholder="Seu melhor email"
-                className="flex-1 px-6 py-4 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent"
-              />
-              <button
-                type="submit"
-                className="bg-accent text-primary px-8 py-4 rounded-lg font-semibold hover:scale-105 transition whitespace-nowrap"
-              >
-                Inscrever-se
-              </button>
-            </form>
           </div>
         </div>
       </section>
