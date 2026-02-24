@@ -9,7 +9,7 @@ collections:
   # Coleção de artigos (salva .md)
   - name: "posts"
     label: "Artigos"
-    folder: "src/content/posts"
+    folder: "public/content/posts"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
@@ -21,22 +21,23 @@ collections:
       - {label: "Autor", name: "author", widget: "string", default: "Dr. Carlos Silva"}
       - {label: "Conteúdo", name: "body", widget: "markdown"}
 
-  # Coleção que GERENCIA a lista de posts (posts.json)
+  # Coleção que gerencia a lista de artigos (posts.json)
   - name: "postsIndex"
     label: "Lista de Artigos"
     files:
       - name: "postsIndexFile"
-        label: "Lista de Artigos"
-        file: "/posts.json"
+        label: "Artigos Publicados"
+        file: "public/posts.json"
         fields:
-          - label: "Artigos"
+          - label: "Selecione os artigos que aparecerão no blog"
             name: "posts"
             widget: "list"
-            summary: "{{fields.slug}}"
+            summary: "{{fields.titulo}}"
             field:
               name: "slug"
               widget: "relation"
               collection: "posts"
-              search_fields: ["title", "slug"]
+              search_fields: ["title"]
               value_field: "slug"
               display_fields: ["title"]
+              multiple: false
