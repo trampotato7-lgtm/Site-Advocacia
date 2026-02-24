@@ -22,15 +22,28 @@ export default function Blog() {
         const settingsData = await loadContent('/src/content/settings/general.md');
         setContent(prev => ({ ...prev, ...settingsData?.data }));
 
-        // 1️⃣ Carrega a lista de slugs do posts.json
-        const indexRes = await fetch('/posts.json');
-        const indexData = await indexRes.json();
-        const slugs = indexData.posts || [];
+        // 🔥 MÁGICA: Lista TODOS os arquivos .md da pasta public/content/posts/
+        // Como não podemos listar arquivos diretamente no frontend,
+        // vamos usar uma abordagem híbrida: o cliente cria, e o blog tenta carregar
+        // por slug conhecido ou via API do GitHub (mas vamos evitar)
 
-        // 2️⃣ Carrega cada post individualmente
+        // SOLUÇÃO: Pré-definir slugs? Não, porque o cliente cria novos.
+
+        // Vamos usar a API do GitHub SOMENTE para listar os arquivos (público, sem token)
+        const repo = 'oseiasoliveirasilva828-afk/Site-Advocacia';
+        const branch = 'main';
+        const path = 'public/content/posts';
+
+        const githubRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`);
+        const files = await githubRes.json();
+
+        const slugs = files
+          .filter(f => f.name.endsWith('.md'))
+          .map(f => f.name.replace('.md', ''));
+
         const postsData = [];
         for (const slug of slugs) {
-          const res = await fetch(`/src/content/posts/${slug}.md`);
+          const res = await fetch(`/content/posts/${slug}.md`);
           if (res.ok) {
             const text = await res.text();
             const { data, content } = parseFrontmatter(text);

@@ -6,7 +6,6 @@ media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
 
 collections:
-  # Artigos
   - name: "posts"
     label: "Artigos"
     folder: "public/content/posts"
@@ -16,27 +15,7 @@ collections:
       - {label: "Título", name: "title", widget: "string"}
       - {label: "Data", name: "date", widget: "datetime"}
       - {label: "Categoria", name: "category", widget: "string", required: false}
-      - {label: "Descrição", name: "description", widget: "text", required: false}
-      - {label: "Imagem de destaque", name: "image", widget: "image", required: false}
+      - {label: "Descrição", name: "description", widget: "text", required: false, hint: "Resumo que aparece na lista de artigos"}
+      - {label: "Imagem de destaque", name: "image", widget: "image", required: false, hint: "Imagem que aparece no card do artigo"}
       - {label: "Autor", name: "author", widget: "string", default: "Dr. Carlos Silva"}
       - {label: "Conteúdo", name: "body", widget: "markdown"}
-
-  # Lista de artigos (RELATION PURA, SEM OPTIONS COMPLEXAS)
-  - name: "postsIndex"
-    label: "Lista de Artigos"
-    files:
-      - name: "postsIndexFile"
-        label: "Artigos Publicados"
-        file: "public/posts.json"
-        fields:
-          - label: "Artigos no blog"
-            name: "posts"
-            widget: "list"
-            field:
-              name: "slug"
-              widget: "relation"
-              collection: "posts"
-              search_fields: ["title"]
-              value_field: "slug"
-              display_fields: ["title"]
-              multiple: false
