@@ -4,23 +4,116 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gerenciar Site</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .login-container {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    h1 {
+      color: #0a2472;
+      margin-bottom: 10px;
+    }
+    p {
+      color: #666;
+      margin-bottom: 30px;
+    }
+    .github-btn {
+      background-color: #24292e;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.3s;
+    }
+    .github-btn:hover {
+      background-color: #2c974b;
+    }
+    .github-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+    .loading {
+      display: none;
+      margin-top: 20px;
+      color: #666;
+    }
+  </style>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  
+  <div class="login-container">
+    <h1>⚖️ Dr. Carlos Silva</h1>
+    <p>Faça login para gerenciar o conteúdo do site</p>
+    
+    <button id="loginBtn" class="github-btn">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.03-2.682-.103-.253-.447-1.27.098-2.646 0 0 .84-.269 2.75 1.025.8-.223 1.65-.334 2.5-.334.85 0 1.7.111 2.5.334 1.91-1.294 2.75-1.025 2.75-1.025.545 1.376.201 2.393.099 2.646.64.698 1.03 1.591 1.03 2.682 0 3.841-2.337 4.687-4.565 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+      </svg>
+      Login com GitHub
+    </button>
+    
+    <div id="loading" class="loading">
+      <p>Redirecionando para GitHub...</p>
+    </div>
+  </div>
+
   <script>
-    // Verificar se tem token no localStorage
-    (function() {
-      const token = localStorage.getItem('github_token');
-      if (token) {
-        // Forçar o CMS a usar o token
-        window.CMS = window.CMS || {};
-        window.CMS.getToken = function() { return token; };
-        
-        // Limpar token após usar
-        localStorage.removeItem('github_token');
-      }
-    })();
+    // Verificar se já está logado
+    if (localStorage.getItem('github_token')) {
+      // Se tiver token, carrega o CMS
+      loadCMS();
+    }
+
+    // Botão de login
+    document.getElementById('loginBtn').addEventListener('click', function() {
+      document.getElementById('loading').style.display = 'block';
+      this.disabled = true;
+      
+      // Redirecionar para o GitHub
+      const clientId = 'SEU_CLIENT_ID_AQUI'; // ← COLOQUE SEU CLIENT ID
+      const redirectUri = 'https://site-advocacia-one.vercel.app/api/auth';
+      const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo,user`;
+      
+      window.location.href = authUrl;
+    });
+
+    // Função para carregar o CMS
+    function loadCMS() {
+      document.body.innerHTML = '<div id="cms"></div>';
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js';
+      document.body.appendChild(script);
+    }
+
+    // Verificar se tem token na URL (vindo do callback)
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token=')) {
+      const token = hash.split('access_token=')[1].split('&')[0];
+      localStorage.setItem('github_token', token);
+      window.location.hash = '';
+      loadCMS();
+    }
   </script>
 </body>
 </html>
