@@ -22,18 +22,12 @@ export default function Blog() {
         const settingsData = await loadContent('/src/content/settings/general.md');
         setContent(prev => ({ ...prev, ...settingsData?.data }));
 
-        // Buscar lista de arquivos .md via GitHub API (100% automático)
-        const repo = 'oseiasoliveirasilva828-afk/Site-Advocacia';
-        const branch = 'main';
-        const path = 'src/content/posts';
+        // 1️⃣ Carrega a lista de slugs do posts.json
+        const indexRes = await fetch('/src/content/posts/posts.json');
+        const indexData = await indexRes.json();
+        const slugs = indexData.posts || [];
 
-        const githubRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`);
-        const files = await githubRes.json();
-
-        const slugs = files
-          .filter(f => f.name.endsWith('.md') && f.name !== 'index.json')
-          .map(f => f.name.replace('.md', ''));
-
+        // 2️⃣ Carrega cada post individualmente
         const postsData = [];
         for (const slug of slugs) {
           const res = await fetch(`/src/content/posts/${slug}.md`);
@@ -119,7 +113,7 @@ export default function Blog() {
             <p className="text-center text-gray-500">Nenhum artigo encontrado.</p>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredPosts.map((post, idx) => (
+              {filteredPosts.map((post) => (
                 <article key={post.slug} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition hover:-translate-y-2">
                   {post.data.image && (
                     <img src={post.data.image} alt={post.data.title} className="w-full h-48 object-cover" />
