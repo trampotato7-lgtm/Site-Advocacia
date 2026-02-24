@@ -6,7 +6,7 @@ media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
 
 collections:
-  # Coleção de artigos (salva .md)
+  # Artigos (salva .md)
   - name: "posts"
     label: "Artigos"
     folder: "public/content/posts"
@@ -21,7 +21,7 @@ collections:
       - {label: "Autor", name: "author", widget: "string", default: "Dr. Carlos Silva"}
       - {label: "Conteúdo", name: "body", widget: "markdown"}
 
-  # Coleção que gerencia a lista de artigos (posts.json)
+  # Lista de artigos (SALVA O SLUG, mostra o TÍTULO)
   - name: "postsIndex"
     label: "Lista de Artigos"
     files:
@@ -29,7 +29,7 @@ collections:
         label: "Artigos Publicados"
         file: "public/posts.json"
         fields:
-          - label: "Selecione os artigos que aparecerão no blog"
+          - label: "Artigos no blog"
             name: "posts"
             widget: "list"
             summary: "{{fields.titulo}}"
@@ -38,6 +38,6 @@ collections:
               widget: "relation"
               collection: "posts"
               search_fields: ["title"]
-              value_field: "slug"
-              display_fields: ["title"]
+              value_field: "slug"        # ← O QUE É SALVO NO JSON
+              display_fields: ["title"]  # ← O QUE O CLIENTE VÊ
               multiple: false
