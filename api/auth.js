@@ -1,35 +1,62 @@
 // api/auth.js
-export default function handler(req, res) {
-  const { code } = req.query;
-  
+export default async function handler(req, res) {
   // Configurar CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Se for OPTIONS (preflight), retorna ok
+  // Responder a requisições OPTIONS (preflight)
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
 
-  // Se for o callback com código
+  const { code, error } = req.query;
+
+  // Se houver erro do GitHub
+  if (error) {
+    console.error('Erro do GitHub:', error);
+    res.redirect(`/admin/#error=${error}`);
+    return;
+  }
+
+  // Se recebeu o código de autorização
   if (code) {
-    // Redireciona para o admin com o token
-    const redirectUrl = `/admin/#access_token=${code}`;
-    console.log('Redirecionando para:', redirectUrl);
-    res.redirect(redirectUrl);
-    return;
+    try {
+      // Trocar o código por um token de acesso
+      const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          client_id: process.env.GITHUB_CLIENT_ID,
+          client_secret: process.env.GITHUB_CLIENT_SECRET,
+          code: code,
+          redirect_uri: 'https://site-advocacia-one.vercel.app/api/auth'
+        })
+      });
+
+      const tokenData = await tokenResponse.json();
+      
+      if (tokenData.error) {
+        console.error('Erro ao obter token:', tokenData.error);
+        res.redirect(`/admin/#error=${tokenData.error}`);
+        return;
+      }
+
+      // Redireciona para o admin com o token
+      res.redirect(`/admin/#access_token=${tokenData.access_token}`);
+      return;
+    } catch (error) {
+      console.error('Erro na troca de token:', error);
+      res.redirect(`/admin/#error=token_exchange_failed`);
+      return;
+    }
   }
 
-  // Se for erro
-  if (req.query.error) {
-    console.error('Erro do GitHub:', req.query.error);
-    res.redirect(`/admin/#error=${req.query.error}`);
-    return;
-  }
-
-  // Inicia o fluxo OAuth
+  // Iniciar fluxo OAuth (primeira vez)
   const clientId = process.env.GITHUB_CLIENT_ID;
   const redirectUri = 'https://site-advocacia-one.vercel.app/api/auth';
   
