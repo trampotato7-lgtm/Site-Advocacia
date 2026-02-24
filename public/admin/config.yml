@@ -6,7 +6,7 @@ media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
 
 collections:
-  # Artigos (salva .md)
+  # Artigos
   - name: "posts"
     label: "Artigos"
     folder: "public/content/posts"
@@ -21,7 +21,7 @@ collections:
       - {label: "Autor", name: "author", widget: "string", default: "Dr. Carlos Silva"}
       - {label: "Conteúdo", name: "body", widget: "markdown"}
 
-  # Lista de artigos (SALVA O SLUG, mostra o TÍTULO)
+  # Lista de artigos (agora com SELECT em vez de RELATION)
   - name: "postsIndex"
     label: "Lista de Artigos"
     files:
@@ -32,12 +32,11 @@ collections:
           - label: "Artigos no blog"
             name: "posts"
             widget: "list"
-            summary: "{{fields.titulo}}"
             field:
               name: "slug"
-              widget: "relation"
-              collection: "posts"
-              search_fields: ["title"]
-              value_field: "slug"        # ← O QUE É SALVO NO JSON
-              display_fields: ["title"]  # ← O QUE O CLIENTE VÊ
-              multiple: false
+              widget: "select"
+              choices: "{{entries}}"
+              options:
+                from: "posts"
+                value_field: "slug"
+                label_field: "title"
