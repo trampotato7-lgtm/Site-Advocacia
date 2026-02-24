@@ -44,35 +44,6 @@
       line-height: 1.6;
     }
     
-    .github-btn {
-      background-color: #24292e;
-      color: white;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 50px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      transition: all 0.3s;
-      width: 100%;
-      justify-content: center;
-    }
-    
-    .github-btn:hover {
-      background-color: #2c974b;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    }
-    
-    .github-btn svg {
-      width: 20px;
-      height: 20px;
-      fill: white;
-    }
-    
     .loader {
       border: 4px solid #f3f3f3;
       border-top: 4px solid #ffd700;
@@ -95,89 +66,133 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" id="loginContainer">
     <h1>⚖️ Dr. Carlos Silva</h1>
     <p>Faça login para gerenciar os artigos do blog</p>
-    
-    <button id="loginBtn" class="github-btn">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.03-2.682-.103-.253-.447-1.27.098-2.646 0 0 .84-.269 2.75 1.025.8-.223 1.65-.334 2.5-.334.85 0 1.7.111 2.5.334 1.91-1.294 2.75-1.025 2.75-1.025.545 1.376.201 2.393.099 2.646.64.698 1.03 1.591 1.03 2.682 0 3.841-2.337 4.687-4.565 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
-      </svg>
-      Login com GitHub
-    </button>
     
     <div id="loader" class="loader"></div>
     <div id="message" style="margin-top: 20px; color: #666;"></div>
   </div>
 
   <script>
-    // Função para mostrar mensagem
+    // ===== CONFIGURAÇÃO DO CMS =====
+    window.CMS_CONFIG = {
+      backend: {
+        name: "github",
+        repo: "Octavio345/Site-Advocacia",
+        branch: "main",
+        base_url: "https://site-advocacia-one.vercel.app",
+        auth_endpoint: "api/auth"
+      },
+      media_folder: "public/images/uploads",
+      public_folder: "/images/uploads",
+      collections: [
+        {
+          name: "posts",
+          label: "Artigos",
+          folder: "src/content/posts",
+          create: true,
+          slug: "{{year}}-{{month}}-{{day}}-{{slug}}",
+          fields: [
+            { label: "Título", name: "title", widget: "string" },
+            { label: "Data", name: "date", widget: "datetime" },
+            { label: "Categoria", name: "category", widget: "string", required: false },
+            { label: "Descrição", name: "description", widget: "text", required: false },
+            { label: "Imagem de destaque", name: "image", widget: "image", required: false },
+            { label: "Autor", name: "author", widget: "string", default: "Dr. Carlos Silva" },
+            { label: "Conteúdo", name: "body", widget: "markdown" }
+          ]
+        }
+      ]
+    };
+
+    // ===== LÓGICA DE AUTENTICAÇÃO =====
     function showMessage(text) {
       document.getElementById('message').innerText = text;
     }
 
-    // Função para mostrar loader
     function showLoader(show) {
       document.getElementById('loader').style.display = show ? 'block' : 'none';
-      document.getElementById('loginBtn').disabled = show;
     }
 
-    // VERIFICAR SE TEM TOKEN NA URL
+    // Verificar se tem token na URL
     const hash = window.location.hash;
     if (hash && hash.includes('access_token=')) {
-      // Extrair token
       const token = hash.split('access_token=')[1].split('&')[0];
       
       showMessage('✅ Token obtido! Carregando CMS...');
       showLoader(true);
       
-      // Salvar token no localStorage
+      // Salvar token
       localStorage.setItem('github_token', token);
       
-      // Limpar a URL
+      // Limpar URL
       window.location.hash = '';
       
-      // Carregar o CMS
-      loadCMS();
+      // Iniciar CMS com token
+      initCMSWithToken(token);
     } 
     // Verificar se já tem token salvo
     else if (localStorage.getItem('github_token')) {
       showMessage('🔑 Sessão ativa. Carregando CMS...');
       showLoader(true);
-      loadCMS();
+      initCMSWithToken(localStorage.getItem('github_token'));
+    }
+    else {
+      // Mostrar botão de login manual
+      showLoginButton();
     }
 
-    // Botão de login
-    document.getElementById('loginBtn').addEventListener('click', function() {
-      showLoader(true);
-      showMessage('Redirecionando para GitHub...');
-      
-      // Redirecionar para a API de autenticação
-      window.location.href = '/api/auth';
-    });
-
-    // Função para carregar o CMS
-    function loadCMS() {
-      // Esconder container de login
-      document.querySelector('.container').classList.add('hidden');
-      
-      // Mostrar loading
-      document.body.innerHTML = `
-        <div style="background: white; padding: 40px; border-radius: 16px; text-align: center;">
-          <div class="loader" style="display: block;"></div>
-          <p style="margin-top: 20px; color: #0a2472;">Carregando CMS...</p>
-        </div>
+    function showLoginButton() {
+      const container = document.getElementById('loginContainer');
+      container.innerHTML = `
+        <h1>⚖️ Dr. Carlos Silva</h1>
+        <p>Faça login para gerenciar os artigos do blog</p>
+        <button id="loginBtn" style="
+          background-color: #24292e;
+          color: white;
+          border: none;
+          padding: 14px 28px;
+          border-radius: 50px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          transition: all 0.3s;
+          width: 100%;
+          justify-content: center;
+        ">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.03-2.682-.103-.253-.447-1.27.098-2.646 0 0 .84-.269 2.75 1.025.8-.223 1.65-.334 2.5-.334.85 0 1.7.111 2.5.334 1.91-1.294 2.75-1.025 2.75-1.025.545 1.376.201 2.393.099 2.646.64.698 1.03 1.591 1.03 2.682 0 3.841-2.337 4.687-4.565 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+          </svg>
+          Login com GitHub
+        </button>
+        <div id="loader" class="loader"></div>
+        <div id="message" style="margin-top: 20px; color: #666;"></div>
       `;
       
-      // Adicionar o script do CMS
+      document.getElementById('loginBtn').addEventListener('click', function() {
+        showLoader(true);
+        document.getElementById('message').innerText = 'Redirecionando para GitHub...';
+        window.location.href = '/api/auth';
+      });
+    }
+
+    function initCMSWithToken(token) {
+      // Configurar CMS para usar o token
+      window.CMS = window.CMS || {};
+      window.CMS.getToken = function() { return token; };
+      
+      // Inicializar CMS com a configuração
+      window.CMS_MANUAL_INIT = true;
+      
+      // Carregar script do CMS
       const script = document.createElement('script');
       script.src = 'https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js';
       script.onload = function() {
-        console.log('CMS carregado com sucesso!');
-      };
-      script.onerror = function() {
-        showMessage('❌ Erro ao carregar CMS. Tente novamente.');
-        showLoader(false);
+        window.CMS.init({ config: window.CMS_CONFIG });
       };
       document.body.appendChild(script);
     }
