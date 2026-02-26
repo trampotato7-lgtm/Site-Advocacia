@@ -28,7 +28,6 @@ export default function Post() {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showShareMenu, setShowShareMenu] = useState(false);
-  const [showLoading, setShowLoading] = useState(true);
   const articleRef = useRef(null);
   const [content, setContent] = useState({
     siteName: 'Dr. Carlos Silva',
@@ -55,11 +54,10 @@ export default function Post() {
         console.error('Erro ao carregar post:', error);
         setPost(null);
       } finally {
-        // Delay mínimo de 1.5 segundos para mostrar a tela de carregamento
+        // Delay para mostrar a tela de carregamento
         setTimeout(() => {
           setLoading(false);
-          setTimeout(() => setShowLoading(false), 500);
-        }, 1500);
+        }, 800);
       }
     }
 
@@ -272,47 +270,32 @@ export default function Post() {
     setShowShareMenu(false);
   };
 
-  // TELA DE CARREGAMENTO COM ANIMAÇÃO DE SAÍDA
-  if (loading || showLoading) {
+  // TELA DE CARREGAMENTO IGUAL A DA HOME
+  if (loading) {
     return (
-      <motion.div 
-        initial={{ opacity: 1 }}
-        animate={{ opacity: loading ? 1 : 0 }}
-        transition={{ duration: 0.5 }}
-        className="min-h-screen bg-primary fixed inset-0 z-[200] flex items-center justify-center"
-      >
+      <div className="min-h-screen bg-navy-900 flex items-center justify-center">
         <div className="text-center">
           <div className="relative w-32 h-32 mx-auto mb-8">
             <div className="absolute inset-0 border-2 border-gold-500/20 rounded-full"></div>
             <div className="absolute inset-0 border-2 border-gold-500 border-t-transparent rounded-full animate-spin"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-4xl text-gold-500 animate-pulse">⚖️</span>
+              <span className="text-4xl text-gold-500">⚖️</span>
             </div>
           </div>
-          <motion.p 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-gold-500/80 font-serif italic text-lg tracking-wide"
-          >
-            Carregando artigo jurídico...
-          </motion.p>
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="text-navy-300 text-sm mt-4 font-light"
-          >
+          <p className="text-gold-500/80 font-serif italic text-lg tracking-wide">
+            Carregando documento jurídico...
+          </p>
+          <p className="text-navy-300 text-sm mt-4 font-light">
             {content.siteName} • {content.oab}
-          </motion.p>
+          </p>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-primary">
+      <div className="min-h-screen bg-navy-900">
         <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
         
         <div className="h-1 bg-gradient-to-r from-gold-500/0 via-gold-500 to-gold-500/0"></div>
@@ -359,8 +342,41 @@ export default function Post() {
 
   return (
     <div className="min-h-screen bg-[#F9F7F4]">
-      {/* HEADER - AGORA FUNCIONANDO CORRETAMENTE */}
-      <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
+      {/* HEADER COM FUNDO AZUL */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-blue-600 shadow-md">
+        <div className="container-custom py-4">
+          <div className="flex justify-between items-center">
+            <Link to="/" className="text-white">
+              <h1 className="text-2xl font-bold">{content.siteName}</h1>
+              <p className="text-sm text-white/80">{content.oab}</p>
+            </Link>
+            
+            <nav className="hidden md:flex items-center space-x-8">
+              {['Início', 'Artigos', 'Sobre', 'Contato'].map((item) => (
+                <Link
+                  key={item}
+                  to={item === 'Início' ? '/' : `/${item.toLowerCase()}`}
+                  className="text-white hover:text-gold-300 transition-colors font-medium"
+                >
+                  {item}
+                </Link>
+              ))}
+            </nav>
+
+            <a
+              href={`https://wa.me/${content.whatsapp}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-full font-medium transition-all hover:scale-105"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771z"/>
+              </svg>
+              WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
       
       {/* Espaçamento para compensar o header fixo */}
       <div className="h-24"></div>
