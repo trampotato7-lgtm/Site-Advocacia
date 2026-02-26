@@ -20,9 +20,16 @@ export default {
           500: '#c9a227',
           600: '#a87f1f',
         },
+        paper: {
+          50: '#faf9f7',
+          100: '#f5f2ed',
+          200: '#e8e2d9',
+          300: '#d6cdc1',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Cormorant Garamond', 'Georgia', 'serif'],
       },
     },
   },

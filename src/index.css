@@ -3,7 +3,19 @@
 
 /* Usando a nova sintaxe do Tailwind v4 */
 @import "tailwindcss";
+/* Adicione ao seu arquivo CSS global */
+:root {
+  --color-paper-50: #faf9f7;
+  --color-paper-100: #f5f2ed;
+  --color-paper-200: #e8e2d9;
+  --color-paper-300: #d6cdc1;
+}
 
+.bg-paper-50 { background-color: #faf9f7; }
+.bg-paper-100 { background-color: #f5f2ed; }
+.border-paper-200 { border-color: #e8e2d9; }
+.border-paper-300 { border-color: #d6cdc1; }
+.text-paper-50 { color: #faf9f7; }
 /* Configurações personalizadas */
 @theme {
   --color-primary: #0a2472;
@@ -81,4 +93,22 @@
   body {
     background-color: #f9fafb;
   }
+}
+/* Adicione no seu arquivo CSS global */
+.prose blockquote {
+  position: relative;
+}
+
+.prose blockquote::before,
+.prose blockquote::after {
+  content: '"';
+  @apply text-primary/40 text-4xl absolute opacity-50;
+}
+
+.prose blockquote::before {
+  @apply -left-2 top-0;
+}
+
+.prose blockquote::after {
+  @apply -right-2 bottom-0;
 }
