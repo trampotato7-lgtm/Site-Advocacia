@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { marked } from 'marked'; // ESSENCIAL
+import { marked } from 'marked';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import WhatsAppButton from '../components/WhatsAppButton';
-import { loadContent } from "/src/utils/contentLoader";
+import { loadContent } from '/src/utils/contentLoader';
 import '../styles/animations.css';
 
 export default function Post() {
@@ -12,18 +12,20 @@ export default function Post() {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState({
-    siteName: "Dr. Carlos Silva",
-    oab: "OAB/SP 123.456",
-    whatsapp: "5511999999999"
+    siteName: 'Dr. Carlos Silva',
+    oab: 'OAB/SP 123.456',
+    whatsapp: '5511999999999'
   });
 
   useEffect(() => {
     async function loadData() {
       try {
         const settingsData = await loadContent('/src/content/settings/general.md');
-        setContent(prev => ({ ...prev, ...settingsData?.data }));
+        setContent((prev) => ({ ...prev, ...settingsData?.data }));
 
-        const response = await fetch(`/src/content/posts/${slug}.md`);
+        // 🔥 AQUI ESTÁ O CAMINHO CORRETO
+        const response = await fetch(`/content/posts/${slug}.md`);
+
         if (response.ok) {
           const text = await response.text();
           const { data, content } = parseFrontmatter(text);
@@ -32,12 +34,13 @@ export default function Post() {
           setPost(null);
         }
       } catch (error) {
-        console.error('Erro:', error);
+        console.error('Erro ao carregar post:', error);
         setPost(null);
       } finally {
         setLoading(false);
       }
     }
+
     loadData();
   }, [slug]);
 
@@ -46,12 +49,13 @@ export default function Post() {
     if (!match) return { data: {}, content: text };
 
     const data = {};
-    match[1].split('\n').forEach(line => {
+    match[1].split('\n').forEach((line) => {
       if (line.includes(': ')) {
         const [key, ...value] = line.split(': ');
         data[key.trim()] = value.join(': ').trim();
       }
     });
+
     return { data, content: match[2] };
   }
 
@@ -59,7 +63,7 @@ export default function Post() {
     if (!content) return '';
     marked.setOptions({
       breaks: true,
-      gfm: true,
+      gfm: true
     });
     return marked.parse(content);
   }
