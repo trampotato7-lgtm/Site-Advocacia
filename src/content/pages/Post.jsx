@@ -346,6 +346,27 @@ export default function Post() {
       {/* Espaçamento para compensar o header fixo */}
       <div className="h-20"></div>
 
+      {/* ========================================================= */}
+      {/* FAIXA AZUL SUPERIOR - IGUAL ÀS OUTRAS SEÇÕES DO SITE    */}
+      {/* ========================================================= */}
+      <div className="bg-primary py-16 border-b border-accent/20">
+        <div className="container-custom text-center text-white">
+          <div className="max-w-3xl mx-auto">
+            <span className="text-accent font-semibold tracking-wider uppercase mb-4 inline-block">
+              DOUTRINA & JURISPRUDÊNCIA
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Artigos Jurídicos
+            </h2>
+            <p className="text-xl text-white/80 font-light">
+              Análises aprofundadas sobre os temas mais relevantes do direito contemporâneo, 
+              elaboradas por especialistas comprometidos com a excelência.
+            </p>
+            <div className="w-20 h-1 bg-accent mx-auto mt-8"></div>
+          </div>
+        </div>
+      </div>
+
       {/* Conteúdo principal */}
       <main className="container-custom max-w-4xl py-16">
         {/* Navegação */}
