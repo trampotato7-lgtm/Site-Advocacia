@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { marked } from 'marked';
 import { motion } from 'framer-motion';
-import Header from '../components/Header'; // Header transparente original
+import Header from '../components/Header'; // ← mesmo header do blog
 import Footer from '../components/Footer';
 import WhatsAppButton from '../components/WhatsAppButton';
 import { loadContent } from '/src/utils/contentLoader';
@@ -299,15 +299,6 @@ export default function Post() {
       <div className="min-h-screen bg-navy-900">
         <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
         
-        {/* Faixa azul com texto - mesmo em página de erro */}
-        <div className="bg-navy-800 py-2 fixed top-20 left-0 right-0 z-40 shadow-md">
-          <div className="container-custom text-center">
-            <p className="text-gold-500 text-sm font-light tracking-widest">
-              ⚖️ ESCRITÓRIO DE ADVOCACIA • DESDE 2010 • ESPECIALISTAS EM DIREITO CIVIL E EMPRESARIAL
-            </p>
-          </div>
-        </div>
-        
         <div className="h-20"></div>
         
         <div className="flex items-center justify-center px-4 py-20">
@@ -352,27 +343,13 @@ export default function Post() {
 
   return (
     <div className="min-h-screen bg-[#F9F7F4]">
-      {/* Header transparente original */}
+      {/* MESMO HEADER DO BLOG - fundo escuro, menu dourado */}
       <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
       
-      {/* FAIXA AZUL ADICIONAL COM TEXTO - fixa abaixo do header */}
-      <div className="bg-navy-800 py-2 fixed top-20 left-0 right-0 z-40 shadow-md">
-        <div className="container-custom text-center">
-          <p className="text-gold-500 text-sm font-light tracking-widest animate-pulse-slow">
-            ⚖️ ESCRITÓRIO DE ADVOCACIA • DESDE 2010 • ESPECIALISTAS EM DIREITO CIVIL E EMPRESARIAL
-          </p>
-        </div>
-      </div>
-      
-      {/* Espaçamento para compensar o header + faixa */}
-      <div className="h-28"></div>
+      {/* Espaçamento para compensar o header fixo */}
+      <div className="h-20"></div>
 
-      {/* Faixa dourada decorativa abaixo da faixa azul */}
-      <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-gold-500/0 via-gold-500/20 to-gold-500/0 h-px"></div>
-      </div>
-
-      {/* Hero simplificado - apenas título */}
+      {/* Hero - título do artigo */}
       <div className="bg-white border-b border-gray-200 py-16">
         <div className="container-custom max-w-4xl">
           <Link
@@ -439,169 +416,33 @@ export default function Post() {
           </div>
         )}
 
-        {/* ARTIGO - COM CORREÇÃO DE QUEBRA DE LINHA */}
         <article 
           ref={articleRef}
           className="
           prose prose-lg max-w-none
-          
-          /* CORREÇÃO PRINCIPAL: Quebra de linha automática */
           break-words
           whitespace-pre-wrap
-          
           prose-headings:font-serif prose-headings:text-navy-900 prose-headings:font-bold
-          
-          /* Título principal (h1) - estilo de introdução */
           prose-h1:text-3xl prose-h1:mt-16 prose-h1:mb-8 prose-h1:pb-4 prose-h1:border-b-2 prose-h1:border-gold-500/20
-          
-          /* Subtítulos (h2) - estilo de seções numeradas */
           prose-h2:text-2xl prose-h2:mt-14 prose-h2:mb-6 prose-h2:font-serif prose-h2:text-navy-900/90
           prose-h2:before:content-[''] prose-h2:before:inline-block prose-h2:before:w-8 prose-h2:before:h-[2px] prose-h2:before:bg-gold-500/50 prose-h2:before:mr-4 prose-h2:before:align-middle
-          
-          /* Títulos de terceiro nível */
           prose-h3:text-xl prose-h3:mt-10 prose-h3:mb-4 prose-h3:text-navy-900/80
-          
-          /* Parágrafos - confortáveis para leitura e com quebra */
           prose-p:text-gray-700 prose-p:leading-[1.8] prose-p:mb-8 prose-p:text-lg prose-p:font-light
-          
-          /* Primeiro parágrafo após título com destaque sutil */
           prose-h2 + p prose-p:first-line:font-semibold prose-p:first-line:text-navy-900
-          
-          /* Links */
-          prose-a:text-gold-600 hover:prose-a:text-gold-500 prose-a:no-underline hover:prose-a:underline prose-a:transition-all prose-a:font-medium
-          
-          /* Negrito */
+          prose-a:text-gold-600 hover:prose-a:text-gold-500 prose-a:no-underline hover:prose-a:underline
           prose-strong:text-navy-900 prose-strong:font-semibold
-          
-          /* Listas */
           prose-ul:list-disc prose-ul:pl-8 prose-ul:my-8 prose-ul:space-y-2
           prose-ol:list-decimal prose-ol:pl-8 prose-ol:my-8 prose-ol:space-y-2
-          prose-li:text-gray-700 prose-li:marker:text-gold-500 prose-li:text-lg prose-li:font-light
-          
-          /* Citações - estilo jurídico */
+          prose-li:text-gray-700 prose-li:marker:text-gold-500
           prose-blockquote:border-l-4 prose-blockquote:border-gold-500 prose-blockquote:bg-gray-50
           prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:my-10
-          prose-blockquote:not-italic prose-blockquote:text-gray-600 prose-blockquote:text-lg prose-blockquote:font-serif
-          
-          /* Código */
-          prose-code:text-gold-600 prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
-          
-          /* Imagens */
+          prose-code:text-gold-600 prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
           prose-img:rounded-lg prose-img:shadow-md prose-img:my-12 prose-img:mx-auto
-          
-          /* Linhas horizontais - para separar seções */
           prose-hr:border-t-2 prose-hr:border-gray-200 prose-hr:my-16 prose-hr:w-24 prose-hr:mx-auto
-          
-          /* Tabelas - estilo jurídico */
-          prose-table:w-full prose-table:my-12 prose-table:border-collapse
-          prose-th:bg-navy-900/5 prose-th:text-navy-900 prose-th:font-semibold prose-th:p-4 prose-th:border prose-th:border-gray-200 prose-th:text-left
-          prose-td:p-4 prose-td:border prose-td:border-gray-200 prose-td:text-gray-600
-        ">
-          {/* Processamento do markdown */}
+          "
+        >
           <div dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }} />
         </article>
-
-        {/* Notas e referências (rodapé do artigo) */}
-        <div className="mt-20 pt-8 border-t border-gray-200">
-          <div className="text-sm text-gray-500 space-y-4">
-            <p className="flex items-start gap-2">
-              <span className="text-gold-600 font-bold">[1]</span>
-              <span>Tribunal de Justiça do Estado do Piauí. IRDR n. 0759842-91.2020.8.18.0000, Rel. Des. Haroldo Oliveira Rehem, j. 19.06.2024.</span>
-            </p>
-            <p className="flex items-start gap-2">
-              <span className="text-gold-600 font-bold">[2]</span>
-              <span>TJPI. Súmulas 33 e 34, aprovadas na 141ª Sessão Ordinária Administrativa de 15.07.2024.</span>
-            </p>
-          </div>
-        </div>
-
-        {/* Informações de leitura e ações */}
-        <div className="mt-12 flex flex-wrap items-center justify-between gap-4 text-sm text-gray-400">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-2">
-              <span>⏱️</span>
-              {Math.ceil(post.content.split(' ').length / 200)} min de leitura
-            </span>
-            <span className="flex items-center gap-2">
-              <span>📄</span>
-              {Math.ceil(post.content.split(' ').length / 1000)} páginas
-            </span>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            {/* Botão Compartilhar */}
-            <div className="relative">
-              <button
-                onClick={handleShare}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-gold-500 hover:text-gold-600 transition-all shadow-sm"
-              >
-                <span>📤</span>
-                <span className="hidden sm:inline">Compartilhar</span>
-              </button>
-              
-              {/* Menu de compartilhamento */}
-              {showShareMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
-                  <button
-                    onClick={copyToClipboard}
-                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-gold-600 flex items-center gap-3 transition-colors"
-                  >
-                    <span>🔗</span>
-                    Copiar link
-                  </button>
-                  <button
-                    onClick={shareOnWhatsApp}
-                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-gold-600 flex items-center gap-3 transition-colors"
-                  >
-                    <span>📱</span>
-                    WhatsApp
-                  </button>
-                  <button
-                    onClick={shareOnLinkedIn}
-                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-gold-600 flex items-center gap-3 transition-colors"
-                  >
-                    <span>💼</span>
-                    LinkedIn
-                  </button>
-                  <button
-                    onClick={shareOnTwitter}
-                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-gold-600 flex items-center gap-3 transition-colors"
-                  >
-                    <span>🐦</span>
-                    Twitter
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Botão Imprimir */}
-            <button
-              onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-gold-500 hover:text-gold-600 transition-all shadow-sm"
-            >
-              <span>🖨️</span>
-              <span className="hidden sm:inline">Imprimir</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Bio do autor */}
-        <div className="mt-16 p-8 bg-white rounded-lg border border-gray-200 shadow-sm">
-          <div className="flex items-start gap-4">
-            <div className="w-16 h-16 bg-navy-900 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-3xl text-gold-500">⚖️</span>
-            </div>
-            <div>
-              <h4 className="font-serif font-bold text-navy-900 mb-1">{content.siteName}</h4>
-              <p className="text-sm text-gray-500 mb-2">{content.oab}</p>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Advogado especialista em Direito do Consumidor e Direito Bancário. 
-                Membro da Comissão de Direito Bancário da OAB/SP. Autor de artigos 
-                jurídicos publicados em revistas especializadas.
-              </p>
-            </div>
-          </div>
-        </div>
 
         {/* Navegação entre artigos */}
         <div className="mt-12 pt-6 border-t border-gray-200 flex justify-between items-center">
