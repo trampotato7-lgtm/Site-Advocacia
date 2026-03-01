@@ -21,98 +21,100 @@
       return (match && match[2].length === 11) ? match[2] : null;
     }
 
-    // Componente de pré-visualização (usando a versão do React do Decap CMS)
-    const PostPreview = ({ entry }) => {
-      // Pegar dados do entry
-      const title = entry.getIn(['data', 'title']) || 'Sem título';
-      const date = entry.getIn(['data', 'date']) || new Date().toISOString();
-      const category = entry.getIn(['data', 'category']);
-      const description = entry.getIn(['data', 'description']);
-      const image = entry.getIn(['data', 'image']);
-      const featuredVideo = entry.getIn(['data', 'featured_video']);
-      const author = entry.getIn(['data', 'author']) || 'Edson Silva Maltez';
-      const body = entry.getIn(['data', 'body']) || '';
+    // Usar CMS.createClass para criar o componente (React é injetado automaticamente)
+    const PostPreview = CMS.createClass({
+      render: function() {
+        // Pegar dados do entry (disponível em this.props.entry)
+        const entry = this.props.entry;
+        const title = entry.getIn(['data', 'title']) || 'Sem título';
+        const date = entry.getIn(['data', 'date']) || new Date().toISOString();
+        const category = entry.getIn(['data', 'category']);
+        const description = entry.getIn(['data', 'description']);
+        const image = entry.getIn(['data', 'image']);
+        const featuredVideo = entry.getIn(['data', 'featured_video']);
+        const author = entry.getIn(['data', 'author']) || 'Edson Silva Maltez';
+        const body = entry.getIn(['data', 'body']) || '';
 
-      // Criar elementos com React.createElement (já disponível globalmente)
-      const h = React.createElement;
+        // Criar elementos com React.createElement (agora disponível)
+        const h = this.React ? this.React.createElement : React.createElement;
 
-      // Processar vídeo
-      let videoElement = null;
-      if (featuredVideo) {
-        const videoData = featuredVideo.toJSON ? featuredVideo.toJSON() : featuredVideo;
-        
-        if (videoData.type === 'youtube' && videoData.url) {
-          const videoId = extractYouTubeId(videoData.url);
-          if (videoId) {
-            const iframe = h('iframe', {
-              src: `https://www.youtube.com/embed/${videoId}`,
-              allowFullScreen: true,
-              style: { width: '100%', height: '315px', border: 'none', borderRadius: '8px' }
-            });
+        // Processar vídeo
+        let videoElement = null;
+        if (featuredVideo) {
+          const videoData = featuredVideo.toJSON ? featuredVideo.toJSON() : featuredVideo;
+          
+          if (videoData.type === 'youtube' && videoData.url) {
+            const videoId = extractYouTubeId(videoData.url);
+            if (videoId) {
+              const iframe = h('iframe', {
+                src: `https://www.youtube.com/embed/${videoId}`,
+                allowFullScreen: true,
+                style: { width: '100%', height: '315px', border: 'none', borderRadius: '8px' }
+              });
+              
+              videoElement = h('div', { className: 'video-preview', style: { margin: '20px 0', padding: '15px', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef' } },
+                iframe,
+                videoData.caption ? h('div', { className: 'video-caption', style: { textAlign: 'center', marginTop: '10px', color: '#666', fontStyle: 'italic' } }, videoData.caption) : null
+              );
+            }
+          } else if (videoData.type === 'upload' && videoData.file) {
+            const video = h('video', { controls: true, style: { width: '100%', maxHeight: '400px', borderRadius: '8px' } },
+              h('source', { src: videoData.file, type: 'video/mp4' })
+            );
             
-            videoElement = h('div', { className: 'video-preview' },
-              iframe,
-              videoData.caption ? h('div', { className: 'video-caption' }, videoData.caption) : null
+            videoElement = h('div', { className: 'video-preview', style: { margin: '20px 0', padding: '15px', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef' } },
+              video,
+              videoData.caption ? h('div', { className: 'video-caption', style: { textAlign: 'center', marginTop: '10px', color: '#666', fontStyle: 'italic' } }, videoData.caption) : null
             );
           }
-        } else if (videoData.type === 'upload' && videoData.file) {
-          const video = h('video', { controls: true, style: { width: '100%', maxHeight: '400px', borderRadius: '8px' } },
-            h('source', { src: videoData.file, type: 'video/mp4' })
-          );
-          
-          videoElement = h('div', { className: 'video-preview' },
-            video,
-            videoData.caption ? h('div', { className: 'video-caption' }, videoData.caption) : null
-          );
         }
-      }
 
-      // Processar imagem
-      const imageElement = !featuredVideo && image ? 
-        h('img', { src: image, className: 'preview-image', style: { width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '8px', marginBottom: '30px' } }) : null;
+        // Processar imagem
+        const imageElement = !featuredVideo && image ? 
+          h('img', { src: image, style: { width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '8px', marginBottom: '30px' } }) : null;
 
-      // Processar markdown
-      const contentHtml = window.marked ? window.marked.parse(body) : body;
+        // Processar markdown
+        const contentHtml = window.marked ? window.marked.parse(body) : body;
 
-      // Formatar data
-      const formattedDate = new Date(date).toLocaleDateString('pt-BR');
+        // Formatar data
+        const formattedDate = new Date(date).toLocaleDateString('pt-BR');
 
-      // Montar componente
-      return h('div', { className: 'preview-container', style: { fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '0 auto', padding: '20px', background: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' } },
-        
-        // Header
-        h('div', { className: 'preview-header', style: { background: 'linear-gradient(135deg, #0a2472 0%, #1e3a8a 100%)', color: 'white', padding: '40px', textAlign: 'center', marginBottom: '30px', borderRadius: '8px' } },
-          category ? h('span', { style: { background: '#c9a227', color: '#0a2472', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', display: 'inline-block', marginBottom: '15px' } }, category) : null,
-          h('h1', { style: { fontSize: '36px', margin: '10px 0' } }, title),
-          description ? h('p', { style: { fontSize: '18px', opacity: 0.9, maxWidth: '600px', margin: '15px auto' } }, description) : null,
-          h('div', { style: { display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '20px', fontSize: '14px', opacity: 0.8 } },
-            h('span', null, `📅 ${formattedDate}`),
-            h('span', null, `⚖️ ${author}`)
+        // Montar componente
+        return h('div', { style: { fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '0 auto', padding: '20px', background: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' } },
+          
+          // Header
+          h('div', { style: { background: 'linear-gradient(135deg, #0a2472 0%, #1e3a8a 100%)', color: 'white', padding: '40px', textAlign: 'center', marginBottom: '30px', borderRadius: '8px' } },
+            category ? h('span', { style: { background: '#c9a227', color: '#0a2472', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', display: 'inline-block', marginBottom: '15px' } }, category) : null,
+            h('h1', { style: { fontSize: '36px', margin: '10px 0' } }, title),
+            description ? h('p', { style: { fontSize: '18px', opacity: 0.9, maxWidth: '600px', margin: '15px auto' } }, description) : null,
+            h('div', { style: { display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '20px', fontSize: '14px', opacity: 0.8 } },
+              h('span', null, `📅 ${formattedDate}`),
+              h('span', null, `⚖️ ${author}`)
+            )
+          ),
+          
+          // Vídeo ou imagem
+          videoElement,
+          imageElement,
+          
+          // Conteúdo
+          h('div', { 
+            style: { fontSize: '16px', lineHeight: '1.8', color: '#333' },
+            dangerouslySetInnerHTML: { __html: contentHtml }
+          }),
+          
+          // Footer
+          h('div', { style: { marginTop: '50px', paddingTop: '20px', borderTop: '2px solid #c9a227', textAlign: 'center', fontSize: '14px', color: '#666' } },
+            `Publicado por ${author} • OAB/SP 344.956`
           )
-        ),
-        
-        // Vídeo ou imagem
-        videoElement,
-        imageElement,
-        
-        // Conteúdo
-        h('div', { 
-          className: 'preview-content',
-          style: { fontSize: '16px', lineHeight: '1.8', color: '#333' },
-          dangerouslySetInnerHTML: { __html: contentHtml }
-        }),
-        
-        // Footer
-        h('div', { style: { marginTop: '50px', paddingTop: '20px', borderTop: '2px solid #c9a227', textAlign: 'center', fontSize: '14px', color: '#666' } },
-          `Publicado por ${author} • OAB/SP 344.956`
-        )
-      );
-    };
+        );
+      }
+    });
 
-    // Registrar o componente
+    // Registrar o componente (passando a classe, não uma instância)
     CMS.registerPreviewTemplate('posts', PostPreview);
 
-    // Registrar estilos adicionais (opcional)
+    // Registrar estilos adicionais
     CMS.registerPreviewStyle(`
       .preview-content h1 { font-size: 32px; margin: 20px 0 10px; color: #0a2472; }
       .preview-content h2 { font-size: 28px; margin: 18px 0 8px; color: #1e3a8a; }
@@ -141,7 +143,7 @@
       }
     `);
 
-    console.log('Pré-visualização carregada com React do Decap CMS!');
+    console.log('Pré-visualização carregada com CMS.createClass!');
   </script>
 </body>
 </html>
