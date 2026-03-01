@@ -5,10 +5,6 @@
 media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
 
-# Pasta separada para vídeos
-media_folder_video: "public/videos/uploads"
-public_folder_video: "/videos/uploads"
-
 collections:
   - name: "posts"
     label: "Artigos"
@@ -26,35 +22,17 @@ collections:
          hint: "Imagem que aparece no card do artigo",
          media_library: { config: { multiple: false, max_file_size: 5242880 }}}
       
-      # 🔥 NOVO: Vídeo de destaque (igual ao campo de imagem!)
+      # 🔥 VÍDEO DE DESTAQUE - CORRIGIDO!
       - label: "Vídeo de destaque"
         name: "featured_video"
-        widget: "file"
+        widget: "object"
         required: false
-        hint: "Faça upload de um vídeo MP4 ou cole link do YouTube"
-        media_library:
-          config:
-            multiple: false
-            max_file_size: 52428800 # 50MB para vídeos
-        field:
-          - name: "video_type"
-            label: "Tipo de vídeo"
-            widget: "select"
-            options: ["upload", "youtube"]
-            default: "upload"
-          - name: "video_file"
-            label: "Arquivo de vídeo"
-            widget: "file"
-            required: false
-            media_library:
-              config:
-                multiple: false
-                max_file_size: 52428800
-          - name: "youtube_url"
-            label: "URL do YouTube"
-            widget: "string"
-            required: false
-            hint: "Cole o link do vídeo (ex: https://youtu.be/...)"
+        hint: "Adicione um vídeo MP4 ou link do YouTube"
+        fields:
+          - {label: "Tipo de vídeo", name: "type", widget: "select", options: ["upload", "youtube"], default: "upload"}
+          - {label: "Arquivo de vídeo", name: "file", widget: "file", required: false, media_library: { config: { multiple: false, max_file_size: 52428800 }}}
+          - {label: "URL do YouTube", name: "url", widget: "string", required: false}
+          - {label: "Legenda", name: "caption", widget: "string", required: false}
       
       - {label: "Autor", name: "author", widget: "string", default: "Edson Silva Maltez"}
 
