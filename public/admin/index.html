@@ -91,6 +91,54 @@
       line-height: 1.8;
       color: #333;
     }
+    .preview-content h1 {
+      font-size: 32px;
+      margin: 20px 0 10px;
+      color: #0a2472;
+    }
+    .preview-content h2 {
+      font-size: 28px;
+      margin: 18px 0 8px;
+      color: #1e3a8a;
+    }
+    .preview-content h3 {
+      font-size: 24px;
+      margin: 16px 0 6px;
+    }
+    .preview-content p {
+      margin: 15px 0;
+    }
+    .preview-content blockquote {
+      border-left: 4px solid #c9a227;
+      padding-left: 20px;
+      margin: 20px 0;
+      font-style: italic;
+      color: #555;
+      background: #f9f9f9;
+      padding: 15px 20px;
+      border-radius: 0 8px 8px 0;
+    }
+    .preview-content ul, .preview-content ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+    .preview-content li {
+      margin: 5px 0;
+    }
+    .preview-content a {
+      color: #c9a227;
+      text-decoration: none;
+    }
+    .preview-content a:hover {
+      text-decoration: underline;
+    }
+    .preview-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
     .preview-footer {
       margin-top: 50px;
       padding-top: 20px;
@@ -113,38 +161,21 @@
       return (match && match[2].length === 11) ? match[2] : null;
     }
 
-    // Função para processar vídeo
-    function renderVideo(videoData) {
-      if (!videoData) return '';
-      
-      let videoHtml = '';
-      
-      if (videoData.type === 'youtube' && videoData.url) {
-        const videoId = extractYouTubeId(videoData.url);
-        if (videoId) {
-          videoHtml = `
-            <div class="video-preview">
-              <iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>
-              ${videoData.caption ? `<div class="video-caption">${videoData.caption}</div>` : ''}
-            </div>
-          `;
-        }
-      } else if (videoData.type === 'upload' && videoData.file) {
-        videoHtml = `
-          <div class="video-preview">
-            <video controls>
-              <source src="${videoData.file}" type="video/mp4">
-              Seu navegador não suporta vídeos.
-            </video>
-            ${videoData.caption ? `<div class="video-caption">${videoData.caption}</div>` : ''}
-          </div>
-        `;
+    // Função para criar elementos DOM
+    function createElement(tag, className, children = []) {
+      const element = document.createElement(tag);
+      if (className) element.className = className;
+      if (typeof children === 'string') {
+        element.innerHTML = children;
+      } else {
+        children.forEach(child => {
+          if (child) element.appendChild(child);
+        });
       }
-      
-      return videoHtml;
+      return element;
     }
 
-    // Registrar pré-visualização personalizada
+    // Registrar pré-visualização personalizada (retornando DOM real)
     CMS.registerPreviewTemplate('posts', ({ entry }) => {
       // Pegar dados do entry
       const title = entry.getIn(['data', 'title']) || 'Sem título';
@@ -156,74 +187,86 @@
       const author = entry.getIn(['data', 'author']) || 'Edson Silva Maltez';
       const body = entry.getIn(['data', 'body']) || '';
 
-      // Processar vídeo
-      const videoHtml = featuredVideo ? renderVideo(featuredVideo.toJSON ? featuredVideo.toJSON() : featuredVideo) : '';
+      // Criar container principal
+      const container = createElement('div', 'preview-container');
 
-      // Processar imagem
-      const imageHtml = !featuredVideo && image ? `<img src="${image}" class="preview-image">` : '';
+      // Criar header
+      const header = createElement('div', 'preview-header');
+      
+      if (category) {
+        const categorySpan = createElement('span', 'preview-category', category);
+        header.appendChild(categorySpan);
+      }
+      
+      header.appendChild(createElement('h1', 'preview-title', title));
+      
+      if (description) {
+        header.appendChild(createElement('p', 'preview-description', description));
+      }
+      
+      const metaDiv = createElement('div', 'preview-meta');
+      metaDiv.appendChild(createElement('span', '', `📅 ${new Date(date).toLocaleDateString('pt-BR')}`));
+      metaDiv.appendChild(createElement('span', '', `⚖️ ${author}`));
+      header.appendChild(metaDiv);
+      
+      container.appendChild(header);
 
-      // Processar markdown (usando marked que carregamos)
-      const bodyHtml = window.marked ? window.marked.parse(body) : body;
+      // Processar vídeo de destaque
+      if (featuredVideo) {
+        const videoData = featuredVideo.toJSON ? featuredVideo.toJSON() : featuredVideo;
+        const videoDiv = createElement('div', 'video-preview');
+        
+        if (videoData.type === 'youtube' && videoData.url) {
+          const videoId = extractYouTubeId(videoData.url);
+          if (videoId) {
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://www.youtube.com/embed/${videoId}`;
+            iframe.setAttribute('allowfullscreen', 'true');
+            videoDiv.appendChild(iframe);
+          }
+        } else if (videoData.type === 'upload' && videoData.file) {
+          const video = document.createElement('video');
+          video.controls = true;
+          const source = document.createElement('source');
+          source.src = videoData.file;
+          source.type = 'video/mp4';
+          video.appendChild(source);
+          videoDiv.appendChild(video);
+        }
+        
+        if (videoData.caption) {
+          videoDiv.appendChild(createElement('div', 'video-caption', videoData.caption));
+        }
+        
+        container.appendChild(videoDiv);
+      } 
+      // Processar imagem de destaque
+      else if (image) {
+        const img = document.createElement('img');
+        img.src = image;
+        img.className = 'preview-image';
+        container.appendChild(img);
+      }
 
-      // Formatar data
-      const formattedDate = new Date(date).toLocaleDateString('pt-BR');
+      // Processar conteúdo markdown
+      const contentDiv = createElement('div', 'preview-content');
+      
+      if (body) {
+        // Usar marked para converter markdown para HTML
+        const html = window.marked ? window.marked.parse(body) : body;
+        contentDiv.innerHTML = html;
+      }
+      
+      container.appendChild(contentDiv);
 
-      // Montar HTML completo
-      return `
-        <div class="preview-container">
-          <div class="preview-header">
-            ${category ? `<span class="preview-category">${category}</span>` : ''}
-            <h1 class="preview-title">${title}</h1>
-            ${description ? `<p class="preview-description">${description}</p>` : ''}
-            <div class="preview-meta">
-              <span>📅 ${formattedDate}</span>
-              <span>⚖️ ${author}</span>
-            </div>
-          </div>
+      // Rodapé
+      const footer = createElement('div', 'preview-footer', `Publicado por ${author} • OAB/SP 344.956`);
+      container.appendChild(footer);
 
-          ${videoHtml}
-          ${imageHtml}
-
-          <div class="preview-content">
-            ${bodyHtml}
-          </div>
-
-          <div class="preview-footer">
-            Publicado por ${author} • OAB/SP 344.956
-          </div>
-        </div>
-      `;
+      return container;
     });
 
-    // Registrar estilos adicionais
-    CMS.registerPreviewStyle(`
-      .video-wrapper {
-        position: relative;
-        padding-bottom: 56.25%;
-        height: 0;
-        margin: 20px 0;
-        overflow: hidden;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      }
-      .video-wrapper iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-      }
-      video {
-        width: 100%;
-        max-height: 500px;
-        border-radius: 12px;
-        margin: 20px 0;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      }
-    `);
-
-    console.log('Pré-visualização carregada com marked!');
+    console.log('Pré-visualização DOM carregada!');
   </script>
 </body>
 </html>
