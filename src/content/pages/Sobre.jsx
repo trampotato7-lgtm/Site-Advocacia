@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import WhatsAppButton from '../components/WhatsAppButton';
-import LoadingScreen from '../components/LoadingScreen'; // ← IMPORT ADICIONADO!
+import LoadingScreen from '../components/LoadingScreen';
 import { loadContent } from '/src/utils/contentLoader';
 import '../styles/animations.css';
 
@@ -29,7 +29,7 @@ export default function Sobre() {
     lawyerCases: 350,
     
     // Biografia
-    lawyerBio: "Natural de Diadema, Edson Silva Maltez construiu uma trajetória sólida na advocacia, marcada pela dedicação e pelo compromisso com a justiça. Formado pela Pontifícia Universidade Católica de Campinas (PUC-Campinas), atua há 12 anos nas áreas de Direito Civil, Trabalhista e Criminal, oferecendo consultoria, assessoria e defesa técnica com ética e atenção personalizada.",
+    lawyerBio: "Natural de Diadema, Edson Silva Maltez construiu uma trajetória sólida na advocacia, marcada pela dedicação e pelo compromisso com a justiça. Formado pela Pontifícia Universidade Católica de Campinas (PUC-Campinas), atua há 12 anos nas áreas de Direito Civil, Trabalhista, Imobliliário e Criminal, oferecendo consultoria, assessoria e defesa técnica com ética e atenção personalizada.",
     
     // Citações
     quote: "A justiça não é apenas uma profissão, é um compromisso com a verdade e com o próximo.",
@@ -52,13 +52,12 @@ export default function Sobre() {
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
       } finally {
-        setTimeout(() => setLoading(false), 1000); // Pequeno delay para mostrar o loading
+        setTimeout(() => setLoading(false), 1000);
       }
     }
     loadData();
   }, []);
 
-  // Usando o mesmo LoadingScreen dos outros componentes!
   if (loading) return <LoadingScreen />;
 
   return (
@@ -207,12 +206,6 @@ export default function Sobre() {
                   </div>
                   <span className="text-gray-700 text-sm md:text-base">Inscrito desde 2014</span>
                 </li>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <div className="w-5 h-5 md:w-6 md:h-6 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <i className="fas fa-check text-accent text-xs"></i>
-                  </div>
-                  <span className="text-gray-700 text-sm md:text-base">Membro da Comissão de Direito Bancário</span>
-                </li>
               </ul>
             </div>
 
@@ -232,7 +225,7 @@ export default function Sobre() {
         </div>
       </section>
 
-      {/* Áreas de Atuação */}
+      {/* Áreas de Atuação - COM DIREITO IMOBILIÁRIO */}
       <section className="py-16 md:py-24 bg-gray-50">
         <div className="container-custom px-4">
           <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
@@ -242,7 +235,7 @@ export default function Sobre() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6">
             <div className="bg-white p-4 md:p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition">
               <span className="text-3xl md:text-4xl text-accent mb-2 md:mb-3 block">⚖️</span>
               <h3 className="font-bold text-primary text-sm md:text-base">Direito Civil</h3>
@@ -258,6 +251,11 @@ export default function Sobre() {
             <div className="bg-white p-4 md:p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition">
               <span className="text-3xl md:text-4xl text-accent mb-2 md:mb-3 block">🏛️</span>
               <h3 className="font-bold text-primary text-sm md:text-base">Direito Empresarial</h3>
+            </div>
+            {/* Direito Imobiliário - NOVO */}
+            <div className="bg-white p-4 md:p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition">
+              <span className="text-3xl md:text-4xl text-accent mb-2 md:mb-3 block">🏠</span>
+              <h3 className="font-bold text-primary text-sm md:text-base">Direito Imobiliário</h3>
             </div>
           </div>
         </div>

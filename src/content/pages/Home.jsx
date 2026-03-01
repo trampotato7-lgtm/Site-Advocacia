@@ -77,6 +77,7 @@ export default function Home() {
         cases={content.cases}
       />
       
+      {/* Seção de Áreas de Atuação - COM DIREITO IMOBILIÁRIO */}
       <section className="py-24 bg-white">
         <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -90,7 +91,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Direito Civil */}
             <div className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 p-8 border border-gray-100">
               <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-3xl text-accent group-hover:scale-110 transition-transform">
@@ -127,6 +128,19 @@ export default function Home() {
                 Representação de empregados e empregadores em ações trabalhistas, acordos, rescisões 
                 e consultoria preventiva. Atuação focada na prevenção de conflitos e na defesa dos 
                 direitos violados nas relações de trabalho.
+              </p>
+            </div>
+
+            {/* Direito Imobiliário - NOVO */}
+            <div className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 p-8 border border-gray-100">
+              <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-3xl text-accent group-hover:scale-110 transition-transform">
+                <i className="fas fa-home"></i>
+              </div>
+              <h3 className="text-2xl font-bold text-primary mb-3 group-hover:text-accent transition-colors">Direito Imobiliário</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Assessoria completa em compra e venda de imóveis, contratos de locação, 
+                regularização de propriedades, usucapião e negociações imobiliárias. 
+                Segurança jurídica para seu patrimônio.
               </p>
             </div>
           </div>
@@ -351,7 +365,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA para Contato - substitui a ContactSection */}
+      {/* CTA para Contato */}
       <section className="py-20 bg-primary text-white">
         <div className="container-custom text-center">
           <h3 className="text-3xl md:text-4xl font-bold mb-6 animate-fadeInUp">

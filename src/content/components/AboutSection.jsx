@@ -46,13 +46,14 @@ export default function AboutSection({ lawyerName, lawyerBio, lawyerPhoto, exper
               {lawyerBio}
             </p>
 
-            {/* Specializations Grid - Mobile First */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-4">
+            {/* Specializations Grid - AGORA COM 5 ÁREAS (incluindo Direito Imobiliário) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 pt-4">
               {(specializations || [
                 { icon: "⚖️", title: "Direito Civil" },
                 { icon: "📄", title: "Direito Trabalhista" },
                 { icon: "🔒", title: "Direito Criminal" },
-                { icon: "🏛️", title: "Direito Empresarial" }
+                { icon: "🏛️", title: "Direito Empresarial" },
+                { icon: "🏠", title: "Direito Imobiliário" } // NOVO!
               ]).map((spec, index) => (
                 <div
                   key={index}
@@ -61,7 +62,7 @@ export default function AboutSection({ lawyerName, lawyerBio, lawyerPhoto, exper
                   <span className="text-2xl sm:text-3xl lg:text-3xl mb-1 sm:mb-2 block group-hover:scale-110 transition-transform">
                     {spec.icon}
                   </span>
-                  <h3 className="font-semibold text-primary text-xs sm:text-sm lg:text-base whitespace-nowrap">
+                  <h3 className="font-semibold text-primary text-xs sm:text-sm lg:text-sm text-center">
                     {spec.title}
                   </h3>
                 </div>

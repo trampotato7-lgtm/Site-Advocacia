@@ -16,7 +16,7 @@ import {
 export default function Footer({ siteName, oab, phone, email, address, whatsapp }) {
   const currentYear = new Date().getFullYear();
 
-  // Links das redes sociais (mesmos do Contato.jsx)
+  // Links das redes sociais
   const socialLinks = {
     instagram: "https://www.instagram.com/edsonmaltezadvocacia?igsh=cmVtNjUyZHlmZDZ3&utm_source=qr",
     tiktok: "https://www.tiktok.com/@dr..edson.maltez?_r=1&_t=ZS-94J2UOV6ho8",
@@ -42,7 +42,7 @@ export default function Footer({ siteName, oab, phone, email, address, whatsapp 
             
             <p className="text-white/70 text-xs sm:text-sm leading-relaxed max-w-xs mx-auto sm:mx-0">
               Excelência e compromisso com seus direitos há mais de 12 anos. 
-              Atuação nas áreas Cível, Trabalhista e Criminal com ética, 
+              Atuação nas áreas Cívil, Imobliliário, Trabalhista e Criminal com ética, 
               dedicação e atenção personalizada a cada cliente.
             </p>
 
@@ -146,7 +146,7 @@ export default function Footer({ siteName, oab, phone, email, address, whatsapp 
             </ul>
           </div>
 
-          {/* Coluna 4 - Horário e Redes Sociais (CORES OFICIAIS) */}
+          {/* Coluna 4 - Horário e Redes Sociais */}
           <div className="space-y-3 sm:space-y-4 text-center sm:text-left">
             <h4 className="text-xs sm:text-sm font-semibold text-accent tracking-[0.2em] uppercase">
               Atendimento
@@ -162,11 +162,11 @@ export default function Footer({ siteName, oab, phone, email, address, whatsapp 
               </div>
             </div>
 
-            {/* Redes Sociais - Cores Oficiais (sem hover para cor principal) */}
+            {/* Redes Sociais - Cores Oficiais */}
             <div className="pt-4 sm:pt-6">
               <h5 className="text-[10px] sm:text-xs text-white/40 mb-2 sm:mb-3 tracking-wider">SIGA-NOS</h5>
               <div className="flex justify-center sm:justify-start gap-2 sm:gap-3">
-                {/* Instagram - Gradiente oficial */}
+                {/* Instagram */}
                 <a
                   href={socialLinks.instagram}
                   target="_blank"
@@ -180,7 +180,7 @@ export default function Footer({ siteName, oab, phone, email, address, whatsapp 
                   <FontAwesomeIcon icon={faInstagram} className="text-sm sm:text-base" />
                 </a>
 
-                {/* TikTok - Preto oficial */}
+                {/* TikTok */}
                 <a
                   href={socialLinks.tiktok}
                   target="_blank"
@@ -192,7 +192,7 @@ export default function Footer({ siteName, oab, phone, email, address, whatsapp 
                   <FontAwesomeIcon icon={faTiktok} className="text-sm sm:text-base" />
                 </a>
 
-                {/* Facebook - Azul oficial */}
+                {/* Facebook */}
                 <a
                   href={socialLinks.facebook}
                   target="_blank"
@@ -209,7 +209,7 @@ export default function Footer({ siteName, oab, phone, email, address, whatsapp 
         </div>
       </div>
 
-      {/* Bottom Bar - Direitos autorais */}
+      {/* Bottom Bar */}
       <div className="border-t border-white/10">
         <div className="container-custom px-4 sm:px-6 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4">
