@@ -16,57 +16,18 @@ function extractYouTubeId(url) {
   return (match && match[2].length === 11) ? match[2] : null;
 }
 
-// Função para processar o campo de vídeo de destaque
+// Função para processar o campo de vídeo (agora recebe objeto diretamente)
 function processFeaturedVideo(videoData) {
   console.log('processFeaturedVideo recebeu:', videoData);
-  console.log('Tipo:', typeof videoData);
   
-  if (!videoData) {
-    console.log('videoData é null/undefined');
-    return null;
-  }
+  if (!videoData) return null;
   
-  try {
-    let data = videoData;
+  // Se já for um objeto (vindo do YAML), usa direto
+  if (typeof videoData === 'object') {
+    console.log('É objeto, processando...');
     
-    // Se for string, tenta várias formas de parsear
-    if (typeof videoData === 'string') {
-      console.log('É string, tentando parsear...');
-      
-      // Tenta parsear diretamente
-      try {
-        data = JSON.parse(videoData);
-        console.log('Parsed JSON:', data);
-      } catch (e) {
-        console.log('Erro ao parsear JSON direto:', e);
-        
-        // Tenta remover aspas extras
-        const cleanStr = videoData.replace(/^"|"$/g, '').replace(/\\"/g, '"');
-        try {
-          data = JSON.parse(cleanStr);
-          console.log('Parsed JSON após limpeza:', data);
-        } catch (e2) {
-          console.log('Erro ainda após limpeza:', e2);
-          
-          // Se for uma URL direta
-          if (videoData.match(/^https?:\/\//)) {
-            console.log('É uma URL direta');
-            data = { type: 'youtube', url: videoData };
-          } else {
-            return null;
-          }
-        }
-      }
-    }
-    
-    // Agora processa o objeto
-    console.log('Dados processados:', data);
-    
-    if (data.type === 'youtube' && data.url) {
-      console.log('Processando YouTube:', data.url);
-      const videoId = extractYouTubeId(data.url);
-      console.log('YouTube ID:', videoId);
-      
+    if (videoData.type === 'youtube' && videoData.url) {
+      const videoId = extractYouTubeId(videoData.url);
       if (videoId) {
         return (
           <div className="mb-8">
@@ -79,14 +40,13 @@ function processFeaturedVideo(videoData) {
                 title="Vídeo do artigo"
               />
             </div>
-            {data.caption && (
-              <p className="text-center text-sm text-gray-500 mt-2">{data.caption}</p>
+            {videoData.caption && (
+              <p className="text-center text-sm text-gray-500 mt-2">{videoData.caption}</p>
             )}
           </div>
         );
       }
-    } else if (data.type === 'upload' && data.file) {
-      console.log('Processando upload:', data.file);
+    } else if (videoData.type === 'upload' && videoData.file) {
       return (
         <div className="mb-8">
           <video
@@ -94,19 +54,30 @@ function processFeaturedVideo(videoData) {
             className="w-full rounded-lg shadow-lg"
             style={{ maxHeight: '500px' }}
           >
-            <source src={data.file} type="video/mp4" />
+            <source src={videoData.file} type="video/mp4" />
             Seu navegador não suporta vídeos.
           </video>
-          {data.caption && (
-            <p className="text-center text-sm text-gray-500 mt-2">{data.caption}</p>
+          {videoData.caption && (
+            <p className="text-center text-sm text-gray-500 mt-2">{videoData.caption}</p>
           )}
         </div>
       );
-    } else {
-      console.log('Tipo não reconhecido ou dados incompletos');
     }
-  } catch (e) {
-    console.error('Erro geral no processFeaturedVideo:', e);
+  }
+  
+  // Se for string (improvável agora, mas mantido por segurança)
+  if (typeof videoData === 'string') {
+    console.log('É string, tentando parsear YAML...');
+    // Tenta converter string para objeto (caso raro)
+    const lines = videoData.split('\n');
+    const obj = {};
+    lines.forEach(line => {
+      const [key, ...val] = line.split(':');
+      if (key && val.length) {
+        obj[key.trim()] = val.join(':').trim();
+      }
+    });
+    return processFeaturedVideo(obj);
   }
   
   return null;
@@ -119,24 +90,34 @@ function parseFrontmatter(text) {
   const data = {};
   const lines = match[1].split('\n');
   
+  let currentKey = null;
+  let currentIndent = 0;
+  let currentObj = null;
+  
   lines.forEach((line) => {
     if (line.trim() === '') return;
     
-    const colonIndex = line.indexOf(': ');
-    if (colonIndex > 0) {
-      const key = line.substring(0, colonIndex).trim();
-      let value = line.substring(colonIndex + 2).trim();
-      
-      // Tenta parsear JSON se o valor começar com { ou [
-      if (value.startsWith('{') && value.endsWith('}')) {
-        try {
-          data[key] = JSON.parse(value);
-        } catch {
-          data[key] = value;
-        }
-      } else {
-        data[key] = value;
-      }
+    // Verifica indentação para objetos aninhados
+    const indent = line.search(/\S/);
+    const trimmedLine = line.trim();
+    
+    if (!trimmedLine.includes(':')) return;
+    
+    const [key, ...valueParts] = trimmedLine.split(':');
+    const value = valueParts.join(':').trim();
+    
+    if (value === '') {
+      // É um objeto aninhado
+      currentKey = key;
+      currentIndent = indent;
+      data[currentKey] = {};
+      currentObj = data[currentKey];
+    } else if (indent > currentIndent && currentObj) {
+      // É propriedade do objeto aninhado
+      currentObj[key] = value;
+    } else {
+      // É propriedade normal
+      data[key] = value;
     }
   });
 
@@ -215,9 +196,9 @@ export default function Post() {
 
         if (response.ok) {
           const text = await response.text();
-          console.log('Raw frontmatter:', text); // VER O QUE ESTÁ VINDO
+          console.log('Raw frontmatter:', text);
           const { data, content } = parseFrontmatter(text);
-          console.log('Dados parseados:', data); // VER O QUE FOI PARSEADO
+          console.log('Dados parseados:', data);
           setPost({ slug, data, content });
         } else {
           setPost(null);
@@ -375,8 +356,7 @@ export default function Post() {
               to="/blog"
               className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-primary font-bold rounded-full hover:scale-105 transition-all"
             >
-              <span className="group-hover:-translate-x-1 transition-transform">←</span>
-              Voltar para o blog
+              ← Voltar para o blog
             </Link>
           </motion.div>
         </div>
@@ -396,7 +376,6 @@ export default function Post() {
     <div className="min-h-screen bg-gray-50">
       <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
 
-      {/* Faixa Azul */}
       <section className="bg-gradient-to-r from-primary to-secondary text-white pt-32 pb-16">
         <div className="container-custom text-center">
           <span className="text-accent font-semibold tracking-wider uppercase text-sm mb-3 inline-block">
@@ -420,7 +399,7 @@ export default function Post() {
           <i className="fas fa-arrow-left"></i> Todos os artigos
         </Link>
 
-        {/* VÍDEO DE DESTAQUE */}
+        {/* VÍDEO DE DESTAQUE - AGORA FUNCIONA! */}
         {post.data.featured_video && processFeaturedVideo(post.data.featured_video)}
 
         {/* Imagem de destaque (se não tiver vídeo) */}
@@ -449,7 +428,6 @@ export default function Post() {
           </Link>
           
           <div className="flex items-center gap-2">
-            {/* Botão Compartilhar */}
             <div className="relative">
               <button
                 onClick={handleShare}
@@ -459,42 +437,18 @@ export default function Post() {
                 <span className="hidden sm:inline">Compartilhar</span>
               </button>
               
-              {/* Menu de compartilhamento */}
               {showShareMenu && (
                 <div className="absolute right-0 mt-2 w-36 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-50">
-                  <button
-                    onClick={copyToClipboard}
-                    className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-2 text-xs"
-                  >
-                    <i className="fas fa-link text-accent w-4"></i>
-                    <span>Copiar link</span>
+                  <button onClick={copyToClipboard} className="w-full px-3 py-1.5 text-left hover:bg-gray-50 text-xs">
+                    <i className="fas fa-link text-accent mr-2"></i>Copiar link
                   </button>
-                  <button
-                    onClick={shareOnWhatsApp}
-                    className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-2 text-xs"
-                  >
-                    <i className="fab fa-whatsapp text-accent w-4"></i>
-                    <span>WhatsApp</span>
-                  </button>
-                  <button
-                    onClick={shareOnLinkedIn}
-                    className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-2 text-xs"
-                  >
-                    <i className="fab fa-linkedin-in text-accent w-4"></i>
-                    <span>LinkedIn</span>
-                  </button>
-                  <button
-                    onClick={shareOnTwitter}
-                    className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-2 text-xs"
-                  >
-                    <i className="fab fa-twitter text-accent w-4"></i>
-                    <span>Twitter</span>
+                  <button onClick={shareOnWhatsApp} className="w-full px-3 py-1.5 text-left hover:bg-gray-50 text-xs">
+                    <i className="fab fa-whatsapp text-accent mr-2"></i>WhatsApp
                   </button>
                 </div>
               )}
             </div>
 
-            {/* Botão Imprimir */}
             <button
               onClick={handlePrint}
               className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-lg hover:border-accent hover:text-accent transition-all text-sm"
@@ -504,34 +458,10 @@ export default function Post() {
             </button>
           </div>
         </div>
-
-        {/* Bio do autor */}
-        <div className="mt-8 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-              <i className="fas fa-user-tie text-xl text-accent"></i>
-            </div>
-            <div>
-              <h4 className="font-bold text-primary mb-1 text-sm">{content.siteName}</h4>
-              <p className="text-xs text-gray-500 mb-1">{content.oab}</p>
-              <p className="text-gray-600 text-xs">
-                Advogado especialista em Direito Civil, Trabalhista e Criminal. 
-                Membro da OAB/SP desde 2014, com atuação dedicada e atenção personalizada a cada cliente.
-              </p>
-            </div>
-          </div>
-        </div>
       </main>
 
       <WhatsAppButton whatsapp={content.whatsapp} />
-      <Footer
-        siteName={content.siteName}
-        oab={content.oab}
-        phone={content.phone}
-        email={content.email}
-        address={content.address}
-        whatsapp={content.whatsapp}
-      />
+      <Footer {...content} />
     </div>
   );
 }
