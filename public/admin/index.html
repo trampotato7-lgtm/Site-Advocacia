@@ -91,23 +91,10 @@
       line-height: 1.8;
       color: #333;
     }
-    .preview-content h1 {
-      font-size: 32px;
-      margin: 20px 0 10px;
-      color: #0a2472;
-    }
-    .preview-content h2 {
-      font-size: 28px;
-      margin: 18px 0 8px;
-      color: #1e3a8a;
-    }
-    .preview-content h3 {
-      font-size: 24px;
-      margin: 16px 0 6px;
-    }
-    .preview-content p {
-      margin: 15px 0;
-    }
+    .preview-content h1 { font-size: 32px; margin: 20px 0 10px; color: #0a2472; }
+    .preview-content h2 { font-size: 28px; margin: 18px 0 8px; color: #1e3a8a; }
+    .preview-content h3 { font-size: 24px; margin: 16px 0 6px; }
+    .preview-content p { margin: 15px 0; }
     .preview-content blockquote {
       border-left: 4px solid #c9a227;
       padding-left: 20px;
@@ -118,20 +105,10 @@
       padding: 15px 20px;
       border-radius: 0 8px 8px 0;
     }
-    .preview-content ul, .preview-content ol {
-      margin: 15px 0;
-      padding-left: 30px;
-    }
-    .preview-content li {
-      margin: 5px 0;
-    }
-    .preview-content a {
-      color: #c9a227;
-      text-decoration: none;
-    }
-    .preview-content a:hover {
-      text-decoration: underline;
-    }
+    .preview-content ul, .preview-content ol { margin: 15px 0; padding-left: 30px; }
+    .preview-content li { margin: 5px 0; }
+    .preview-content a { color: #c9a227; text-decoration: none; }
+    .preview-content a:hover { text-decoration: underline; }
     .preview-content img {
       max-width: 100%;
       height: auto;
@@ -161,21 +138,7 @@
       return (match && match[2].length === 11) ? match[2] : null;
     }
 
-    // Função para criar elementos DOM
-    function createElement(tag, className, children = []) {
-      const element = document.createElement(tag);
-      if (className) element.className = className;
-      if (typeof children === 'string') {
-        element.innerHTML = children;
-      } else {
-        children.forEach(child => {
-          if (child) element.appendChild(child);
-        });
-      }
-      return element;
-    }
-
-    // Registrar pré-visualização personalizada (retornando DOM real)
+    // Registrar pré-visualização personalizada (retornando STRING HTML)
     CMS.registerPreviewTemplate('posts', ({ entry }) => {
       // Pegar dados do entry
       const title = entry.getIn(['data', 'title']) || 'Sem título';
@@ -187,86 +150,71 @@
       const author = entry.getIn(['data', 'author']) || 'Edson Silva Maltez';
       const body = entry.getIn(['data', 'body']) || '';
 
-      // Criar container principal
-      const container = createElement('div', 'preview-container');
-
-      // Criar header
-      const header = createElement('div', 'preview-header');
-      
-      if (category) {
-        const categorySpan = createElement('span', 'preview-category', category);
-        header.appendChild(categorySpan);
-      }
-      
-      header.appendChild(createElement('h1', 'preview-title', title));
-      
-      if (description) {
-        header.appendChild(createElement('p', 'preview-description', description));
-      }
-      
-      const metaDiv = createElement('div', 'preview-meta');
-      metaDiv.appendChild(createElement('span', '', `📅 ${new Date(date).toLocaleDateString('pt-BR')}`));
-      metaDiv.appendChild(createElement('span', '', `⚖️ ${author}`));
-      header.appendChild(metaDiv);
-      
-      container.appendChild(header);
-
       // Processar vídeo de destaque
+      let videoHtml = '';
       if (featuredVideo) {
         const videoData = featuredVideo.toJSON ? featuredVideo.toJSON() : featuredVideo;
-        const videoDiv = createElement('div', 'video-preview');
         
         if (videoData.type === 'youtube' && videoData.url) {
           const videoId = extractYouTubeId(videoData.url);
           if (videoId) {
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://www.youtube.com/embed/${videoId}`;
-            iframe.setAttribute('allowfullscreen', 'true');
-            videoDiv.appendChild(iframe);
+            videoHtml = `
+              <div class="video-preview">
+                <iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>
+                ${videoData.caption ? `<div class="video-caption">${videoData.caption}</div>` : ''}
+              </div>
+            `;
           }
         } else if (videoData.type === 'upload' && videoData.file) {
-          const video = document.createElement('video');
-          video.controls = true;
-          const source = document.createElement('source');
-          source.src = videoData.file;
-          source.type = 'video/mp4';
-          video.appendChild(source);
-          videoDiv.appendChild(video);
+          videoHtml = `
+            <div class="video-preview">
+              <video controls>
+                <source src="${videoData.file}" type="video/mp4">
+                Seu navegador não suporta vídeos.
+              </video>
+              ${videoData.caption ? `<div class="video-caption">${videoData.caption}</div>` : ''}
+            </div>
+          `;
         }
-        
-        if (videoData.caption) {
-          videoDiv.appendChild(createElement('div', 'video-caption', videoData.caption));
-        }
-        
-        container.appendChild(videoDiv);
-      } 
-      // Processar imagem de destaque
-      else if (image) {
-        const img = document.createElement('img');
-        img.src = image;
-        img.className = 'preview-image';
-        container.appendChild(img);
       }
+
+      // Processar imagem de destaque (se não tiver vídeo)
+      const imageHtml = (!featuredVideo && image) ? `<img src="${image}" class="preview-image">` : '';
 
       // Processar conteúdo markdown
-      const contentDiv = createElement('div', 'preview-content');
-      
-      if (body) {
-        // Usar marked para converter markdown para HTML
-        const html = window.marked ? window.marked.parse(body) : body;
-        contentDiv.innerHTML = html;
-      }
-      
-      container.appendChild(contentDiv);
+      const contentHtml = window.marked ? window.marked.parse(body) : body;
 
-      // Rodapé
-      const footer = createElement('div', 'preview-footer', `Publicado por ${author} • OAB/SP 344.956`);
-      container.appendChild(footer);
+      // Formatar data
+      const formattedDate = new Date(date).toLocaleDateString('pt-BR');
 
-      return container;
+      // Montar HTML completo como STRING
+      return `
+        <div class="preview-container">
+          <div class="preview-header">
+            ${category ? `<span class="preview-category">${category}</span>` : ''}
+            <h1 class="preview-title">${title}</h1>
+            ${description ? `<p class="preview-description">${description}</p>` : ''}
+            <div class="preview-meta">
+              <span>📅 ${formattedDate}</span>
+              <span>⚖️ ${author}</span>
+            </div>
+          </div>
+
+          ${videoHtml}
+          ${imageHtml}
+
+          <div class="preview-content">
+            ${contentHtml}
+          </div>
+
+          <div class="preview-footer">
+            Publicado por ${author} • OAB/SP 344.956
+          </div>
+        </div>
+      `;
     });
 
-    console.log('Pré-visualização DOM carregada!');
+    console.log('Pré-visualização STRING carregada!');
   </script>
 </body>
 </html>
