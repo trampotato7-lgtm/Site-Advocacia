@@ -83,7 +83,7 @@ export default function HeroSection({ title, subtitle, whatsapp, heroImage }) {
             </div>
             
             <div className="text-center">
-              <p className="text-2xl sm:text-3xl lg:text-4xl font-bold">100%</p>
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-bold">98%</p>
               <p className="text-xs sm:text-sm opacity-80 whitespace-nowrap">Clientes satisfeitos</p>
             </div>
           </div>
