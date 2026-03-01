@@ -15,11 +15,9 @@ export default function Contato() {
     whatsapp: "5519996319810",
     email: "dredsonmaltez@gmail.com",
     address: "Rua Francisco Biancalana, 31 - sala 02 - Vila Santana, Sumaré - SP",
-    mapsLink: "https://goo.gl/maps/...",
-    wazeLink: "https://waze.com/ul/...",
-    instagram: "#",
-    linkedin: "#",
-    facebook: "#"
+    instagram: "https://www.instagram.com/edsonmaltezadvocacia?igsh=cmVtNjUyZHlmZDZ3&utm_source=qr",
+    tiktok: "https://www.tiktok.com/@dr..edson.maltez?_r=1&_t=ZS-94J2UOV6ho8",
+    facebook: "https://www.facebook.com/share/18Evchghd7/?mibextid=wwXIfr"
   });
 
   const [formData, setFormData] = useState({
@@ -159,8 +157,8 @@ export default function Contato() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary mb-1">Horário de atendimento</h3>
-                    <p className="text-gray-600">Segunda a Sexta: 9h às 18h</p>
-                    <p className="text-gray-600">Sábado: 9h às 13h</p>
+                    <p className="text-gray-600">Segunda a Sexta: 9h às 17h</p>
+                    <p className="text-gray-600">Sábado e Domingo: Fechado</p>
                   </div>
                 </div>
               </div>
@@ -168,29 +166,52 @@ export default function Contato() {
               <div className="pt-6 animate-fadeInUp">
                 <h3 className="font-semibold text-primary mb-4">Redes Sociais</h3>
                 <div className="flex gap-3">
+                  {/* Instagram */}
                   <a
                     href={content.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-2xl hover:bg-gradient-to-r from-purple-500 to-pink-500 hover:text-white transition-all"
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-2xl text-white transition-all hover:scale-110 hover:shadow-lg"
+                    style={{
+                      background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)'
+                    }}
                   >
                     <i className="fab fa-instagram"></i>
                   </a>
-                  <a
-                    href={content.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-2xl hover:bg-blue-600 hover:text-white transition-all"
-                  >
-                    <i className="fab fa-linkedin-in"></i>
-                  </a>
+
+                  {/* Facebook */}
                   <a
                     href={content.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-2xl hover:bg-blue-500 hover:text-white transition-all"
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-2xl text-white transition-all hover:scale-110 hover:shadow-lg"
+                    style={{ backgroundColor: '#1877f2' }}
                   >
                     <i className="fab fa-facebook-f"></i>
+                  </a>
+
+                  {/* TikTok */}
+                  <a
+                    href={content.tiktok}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-2xl text-white transition-all hover:scale-110 hover:shadow-lg"
+                    style={{ backgroundColor: '#000000' }}
+                  >
+                    <i className="fab fa-tiktok"></i>
+                  </a>
+
+                  {/* WhatsApp com mensagem personalizada */}
+                  <a
+                    href={`https://wa.me/${content.whatsapp}?text=${encodeURIComponent(
+                      "Olá! Gostaria de mais informações sobre os serviços de advocacia."
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-2xl text-white transition-all hover:scale-110 hover:shadow-lg"
+                    style={{ backgroundColor: '#25d366' }}
+                  >
+                    <i className="fab fa-whatsapp"></i>
                   </a>
                 </div>
               </div>
@@ -296,10 +317,11 @@ export default function Contato() {
         <div className="container-custom">
           <Map address={content.address} />
           
-          {/* Botões de navegação - Maps e Waze */}
+          {/* Botões de navegação - Google Maps e Waze CORRIGIDOS */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            {/* Google Maps */}
             <a
-              href={content.mapsLink || "https://goo.gl/maps/..."}
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(content.address)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-3 bg-primary text-white px-8 py-4 rounded-xl font-semibold hover:bg-primary/90 transition-all hover:scale-105 shadow-lg group"
@@ -308,8 +330,10 @@ export default function Contato() {
               <span>Abrir no Google Maps</span>
               <i className="fas fa-external-link-alt text-sm group-hover:translate-x-1 transition-transform"></i>
             </a>
+
+            {/* Waze */}
             <a
-              href={content.wazeLink || "https://waze.com/ul/..."}
+              href={`https://www.waze.com/ul?q=${encodeURIComponent(content.address)}&navigate=yes`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-3 bg-[#33CCFF] text-white px-8 py-4 rounded-xl font-semibold hover:bg-[#2ab8e6] transition-all hover:scale-105 shadow-lg group"

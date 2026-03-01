@@ -81,10 +81,10 @@ export default function Blog() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-primary">
+      <div className="min-h-screen flex items-center justify-center bg-primary px-4">
         <div className="text-center">
-          <div className="w-20 h-20 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white text-lg">Carregando artigos...</p>
+          <div className="w-16 h-16 sm:w-20 sm:h-20 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white text-base sm:text-lg">Carregando artigos...</p>
         </div>
       </div>
     );
@@ -94,47 +94,77 @@ export default function Blog() {
     <div className="font-sans overflow-x-hidden">
       <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
 
-      <section className="pt-32 pb-16 bg-gradient-to-r from-primary to-secondary text-white text-center">
-        <div className="container-custom">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 animate-fadeInUp">Artigos & Publicações</h1>
-          <p className="text-xl opacity-90 max-w-2xl mx-auto animate-fadeInUp delay-200">
+      {/* Hero Section - COM GRADIENTE DESDE O TOPO */}
+      <section className="bg-gradient-to-r from-primary to-secondary text-white pt-37 pb-25 md:pb-24 lg:pb-28 -mt-1">
+        <div className="container-custom text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-fadeInUp">Artigos & Publicações</h1>
+          <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto animate-fadeInUp delay-200">
             Análises jurídicas, dicas e informações relevantes para você e seu negócio.
           </p>
         </div>
       </section>
 
-      <section className="py-8 bg-gray-50 border-b">
+      {/* Busca */}
+      <section className="py-6 sm:py-8 bg-gray-50 border-b px-4">
         <div className="container-custom flex justify-center">
           <input
             type="text"
             placeholder="Buscar artigos..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full max-w-md px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent"
+            className="w-full max-w-md px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent"
           />
         </div>
       </section>
 
-      <section className="py-16 bg-white">
+      {/* Lista de Artigos */}
+      <section className="py-12 sm:py-14 md:py-16 bg-white px-4">
         <div className="container-custom">
           {filteredPosts.length === 0 ? (
-            <p className="text-center text-gray-500">Nenhum artigo encontrado.</p>
+            <p className="text-center text-gray-500 text-sm sm:text-base">Nenhum artigo encontrado.</p>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
               {filteredPosts.map((post) => (
-                <article key={post.slug} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition hover:-translate-y-2">
+                <article key={post.slug} className="bg-white rounded-xl sm:rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                  
+                  {/* Imagem */}
                   {post.data.image && (
-                    <img src={post.data.image} alt={post.data.title} className="w-full h-48 object-cover" />
+                    <div className="w-full overflow-hidden">
+                      <img 
+                        src={post.data.image} 
+                        alt={post.data.title} 
+                        className="w-full h-40 sm:h-44 md:h-48 object-cover hover:scale-105 transition-transform duration-500" 
+                      />
+                    </div>
                   )}
-                  <div className="p-6">
-                    <span className="text-sm text-accent font-semibold">{post.data.category || 'Direito'}</span>
-                    <h2 className="text-2xl font-bold text-primary mt-2">
-                      <Link to={`/blog/${post.slug}`}>{post.data.title || 'Sem título'}</Link>
+                  
+                  {/* Conteúdo */}
+                  <div className="p-4 sm:p-5 md:p-6">
+                    <span className="inline-block text-xs sm:text-sm text-accent font-semibold mb-1 sm:mb-2">
+                      {post.data.category || 'Direito'}
+                    </span>
+                    
+                    <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-primary mb-2 line-clamp-2">
+                      <Link to={`/blog/${post.slug}`} className="hover:text-accent transition-colors">
+                        {post.data.title || 'Sem título'}
+                      </Link>
                     </h2>
-                    <p className="text-gray-600 mt-2">{post.data.description || post.content}</p>
-                    <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
-                      <span>{post.data.date ? new Date(post.data.date).toLocaleDateString('pt-BR') : 'Data não informada'}</span>
-                      <Link to={`/blog/${post.slug}`} className="text-accent font-medium hover:underline">Ler mais →</Link>
+                    
+                    <p className="text-gray-600 text-xs sm:text-sm mb-3 line-clamp-3">
+                      {post.data.description || post.content}
+                    </p>
+                    
+                    <div className="flex justify-between items-center pt-2 border-t border-gray-100 text-xs sm:text-sm text-gray-500">
+                      <span>
+                        {post.data.date ? new Date(post.data.date).toLocaleDateString('pt-BR') : 'Data não informada'}
+                      </span>
+                      <Link 
+                        to={`/blog/${post.slug}`}
+                        className="text-accent font-medium hover:underline flex items-center gap-1"
+                      >
+                        <span>Ler mais</span>
+                        <i className="fas fa-arrow-right text-xs"></i>
+                      </Link>
                     </div>
                   </div>
                 </article>

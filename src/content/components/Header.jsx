@@ -1,12 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
+import { 
+  faWhatsapp, 
+  faInstagram, 
+  faTiktok, 
+  faFacebookF 
+} from '@fortawesome/free-brands-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 export default function Header({ siteName, oab, whatsapp, logo }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState(null);
+
+  // Links das redes sociais
+  const socialLinks = {
+    instagram: "https://www.instagram.com/edsonmaltezadvocacia?igsh=cmVtNjUyZHlmZDZ3&utm_source=qr",
+    tiktok: "https://www.tiktok.com/@dr..edson.maltez?_r=1&_t=ZS-94J2UOV6ho8",
+    facebook: "https://www.facebook.com/share/18Evchghd7/?mibextid=wwXIfr"
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -79,13 +92,16 @@ export default function Header({ siteName, oab, whatsapp, logo }) {
                 }}></div>
               )}
               
-              {/* Imagem da logo - por cima do fundo */}
+              {/* LOGO - GIGANTE NO MOBILE (160px) */}
               <img
                 src="/images/logo/logo-principal.png"
                 alt={siteName}
-                className={`relative h-24 sm:h-28 md:h-32 lg:h-36 xl:h-40 w-auto object-contain transition-all duration-500 group-hover:scale-110 ${
+                className={`relative w-auto object-contain transition-all duration-500 group-hover:scale-110 ${
                   isScrolled ? '' : 'brightness-0 invert'
                 }`}
+                style={{
+                  height: '160px' // 160px no mobile
+                }}
               />
             </div>
 
@@ -109,43 +125,87 @@ export default function Header({ siteName, oab, whatsapp, logo }) {
             </div>
           </Link>
 
-          {/* DESKTOP MENU */}
-          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
-            {['Início', 'Artigos', 'Sobre', 'Contato'].map((item) => (
-              <Link
-                key={item}
-                to={getRoute(item)}
-                className="relative group px-2 py-1 overflow-hidden"
-                onMouseEnter={() => setHoveredLink(item)}
-                onMouseLeave={() => setHoveredLink(null)}
-              >
-                <span
-                  className={`relative z-10 font-medium transition-all duration-300 text-sm lg:text-base ${
-                    isScrolled ? 'text-gray-700' : 'text-white'
-                  } group-hover:text-accent`}
+          {/* DESKTOP MENU E REDES SOCIAIS */}
+          <div className="hidden md:flex items-center gap-6">
+            {/* Menu */}
+            <nav className="flex items-center space-x-6 lg:space-x-8">
+              {['Início', 'Artigos', 'Sobre', 'Contato'].map((item) => (
+                <Link
+                  key={item}
+                  to={getRoute(item)}
+                  className="relative group px-2 py-1 overflow-hidden"
+                  onMouseEnter={() => setHoveredLink(item)}
+                  onMouseLeave={() => setHoveredLink(null)}
                 >
-                  {item}
-                </span>
-                <span className="absolute inset-0 bg-accent/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300 origin-center"></span>
-                <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-accent group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
-              </Link>
-            ))}
-          </nav>
+                  <span
+                    className={`relative z-10 font-medium transition-all duration-300 text-sm lg:text-base ${
+                      isScrolled ? 'text-gray-700' : 'text-white'
+                    } group-hover:text-accent`}
+                  >
+                    {item}
+                  </span>
+                  <span className="absolute inset-0 bg-accent/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300 origin-center"></span>
+                  <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-accent group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
+                </Link>
+              ))}
+            </nav>
 
-          {/* WHATSAPP BUTTON */}
-          <a
-            href={whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-sm"
-          >
-            <FontAwesomeIcon icon={faWhatsapp} className="text-base" />
-            <span>WhatsApp</span>
-          </a>
+            {/* Redes Sociais - Ícones com cores oficiais */}
+            <div className="flex items-center gap-2 border-l border-white/20 pl-6">
+              {/* Instagram */}
+              <a
+                href={socialLinks.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white transition-all hover:scale-110 hover:shadow-lg"
+                style={{
+                  background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)'
+                }}
+                aria-label="Instagram"
+              >
+                <FontAwesomeIcon icon={faInstagram} className="text-base" />
+              </a>
+
+              {/* TikTok */}
+              <a
+                href={socialLinks.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white transition-all hover:scale-110 hover:shadow-lg"
+                style={{ backgroundColor: '#000000' }}
+                aria-label="TikTok"
+              >
+                <FontAwesomeIcon icon={faTiktok} className="text-base" />
+              </a>
+
+              {/* Facebook */}
+              <a
+                href={socialLinks.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white transition-all hover:scale-110 hover:shadow-lg"
+                style={{ backgroundColor: '#1877f2' }}
+                aria-label="Facebook"
+              >
+                <FontAwesomeIcon icon={faFacebookF} className="text-base" />
+              </a>
+            </div>
+
+            {/* WhatsApp Button */}
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-sm"
+            >
+              <FontAwesomeIcon icon={faWhatsapp} className="text-base" />
+              <span>WhatsApp</span>
+            </a>
+          </div>
 
           {/* MOBILE MENU BUTTON */}
           <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => setIsMenuOpen(true)}
             className={`md:hidden relative w-10 h-10 flex items-center justify-center z-50 rounded-lg transition-all duration-300 ${
               isScrolled
                 ? 'text-primary hover:bg-primary/10'
@@ -154,71 +214,126 @@ export default function Header({ siteName, oab, whatsapp, logo }) {
             aria-label="Menu"
           >
             <div className="w-6 h-5 flex flex-col justify-between">
-              <span
-                className={`w-full h-0.5 bg-current transform transition-all duration-300 ${
-                  isMenuOpen ? 'rotate-45 translate-y-2' : ''
-                }`}
-              ></span>
-              <span
-                className={`w-full h-0.5 bg-current transition-all duration-300 ${
-                  isMenuOpen ? 'opacity-0' : ''
-                }`}
-              ></span>
-              <span
-                className={`w-full h-0.5 bg-current transform transition-all duration-300 ${
-                  isMenuOpen ? '-rotate-45 -translate-y-2' : ''
-                }`}
-              ></span>
+              <span className="w-full h-0.5 bg-current transform transition-all duration-300"></span>
+              <span className="w-full h-0.5 bg-current transition-all duration-300"></span>
+              <span className="w-full h-0.5 bg-current transform transition-all duration-300"></span>
             </div>
           </button>
         </div>
       </header>
 
-      {/* MOBILE MENU */}
-      <div
-        className={`fixed inset-0 bg-primary z-40 transition-all duration-500 md:hidden ${
-          isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
-        }`}
-      >
-        <div className="flex flex-col items-center justify-center h-full px-6">
-          <div className="mb-12">
-            <img
-              src="/images/logo/logo-principal.png"
-              alt={siteName}
-              className="h-24 w-auto object-contain brightness-0 invert"
-            />
-          </div>
+      {/* MENU BOTTOM SHEET - OPÇÃO 3 */}
+      <div className={`fixed inset-0 z-50 md:hidden transition-all duration-500 ${
+        isMenuOpen ? 'visible' : 'invisible'
+      }`}>
+        {/* Overlay escuro */}
+        <div 
+          className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-500 ${
+            isMenuOpen ? 'opacity-100' : 'opacity-0'
+          }`}
+          onClick={() => setIsMenuOpen(false)}
+        />
+        
+        {/* Menu que sobe de baixo */}
+        <div className={`absolute bottom-0 left-0 right-0 bg-primary rounded-t-3xl shadow-2xl transition-transform duration-500 ${
+          isMenuOpen ? 'translate-y-0' : 'translate-y-full'
+        }`}>
+          
+          {/* Handle (indicador) */}
+          <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mt-4 mb-2"></div>
+          
+          <div className="px-6 py-6 pb-8">
+            {/* Logo no menu - AUMENTADA PARA 140px */}
+            <div className="flex items-center justify-between mb-6">
+              <img 
+                src="/images/logo/logo-principal.png" 
+                alt={siteName} 
+                className="w-auto brightness-0 invert"
+                style={{
+                  height: '140px' // AUMENTADO de 100px para 140px
+                }}
+              />
+              <button 
+                onClick={() => setIsMenuOpen(false)} 
+                className="w-10 h-10 flex items-center justify-center text-white/70 hover:text-white"
+              >
+                <FontAwesomeIcon icon={faTimes} className="text-2xl" />
+              </button>
+            </div>
 
-          <nav className="space-y-6 text-center">
-            {['Início', 'Artigos', 'Sobre', 'Contato'].map((item) => (
-              <Link
-                key={item}
-                to={getRoute(item)}
-                className="group block relative"
+            {/* Links do menu */}
+            <nav className="space-y-1 mb-6">
+              {['Início', 'Artigos', 'Sobre', 'Contato'].map((item) => (
+                <Link
+                  key={item}
+                  to={getRoute(item)}
+                  className="block py-4 px-4 text-xl text-white hover:bg-white/10 rounded-xl transition-all"
+                  onClick={handleLinkClick}
+                >
+                  {item}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Redes sociais em linha */}
+            <div className="flex gap-3 mb-6">
+              {/* Instagram */}
+              <a
+                href={socialLinks.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-3 rounded-xl flex items-center justify-center gap-2 text-white hover:scale-105 transition-all"
+                style={{
+                  background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)'
+                }}
                 onClick={handleLinkClick}
               >
-                <span className="relative z-10 text-2xl font-light text-white group-hover:text-accent transition-colors duration-300">
-                  {item}
-                </span>
-                <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-accent group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
-              </Link>
-            ))}
-          </nav>
+                <FontAwesomeIcon icon={faInstagram} className="text-lg" />
+                <span className="text-sm font-medium">Instagram</span>
+              </a>
 
-          <div className="mt-12">
+              {/* TikTok */}
+              <a
+                href={socialLinks.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-3 rounded-xl flex items-center justify-center gap-2 text-white hover:scale-105 transition-all"
+                style={{ backgroundColor: '#000000' }}
+                onClick={handleLinkClick}
+              >
+                <FontAwesomeIcon icon={faTiktok} className="text-lg" />
+                <span className="text-sm font-medium">TikTok</span>
+              </a>
+
+              {/* Facebook */}
+              <a
+                href={socialLinks.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-3 rounded-xl flex items-center justify-center gap-2 text-white hover:scale-105 transition-all"
+                style={{ backgroundColor: '#1877f2' }}
+                onClick={handleLinkClick}
+              >
+                <FontAwesomeIcon icon={faFacebookF} className="text-lg" />
+                <span className="text-sm font-medium">Facebook</span>
+              </a>
+            </div>
+
+            {/* WhatsApp Button */}
             <a
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full text-lg font-medium transition-all duration-300 hover:scale-105 hover:shadow-xl"
+              className="flex items-center justify-center gap-3 w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl text-lg font-medium transition-all hover:scale-105"
               onClick={handleLinkClick}
             >
               <FontAwesomeIcon icon={faWhatsapp} className="text-xl" />
               <span>WhatsApp</span>
             </a>
-          </div>
 
-          <p className="absolute bottom-8 text-white/40 text-sm">{oab || 'OAB/SP 344.956'}</p>
+            {/* OAB */}
+            <p className="text-white/30 text-xs text-center mt-4">{oab || 'OAB/SP 344.956'}</p>
+          </div>
         </div>
       </div>
     </>

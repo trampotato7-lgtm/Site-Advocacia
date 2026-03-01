@@ -277,16 +277,16 @@ export default function Post() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-primary flex items-center justify-center">
+      <div className="min-h-screen bg-primary flex items-center justify-center px-4">
         <div className="text-center">
-          <div className="relative w-32 h-32 mx-auto mb-8">
+          <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 mx-auto mb-4 sm:mb-6">
             <div className="absolute inset-0 border-2 border-accent/20 rounded-full"></div>
             <div className="absolute inset-0 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-4xl text-accent">⚖️</span>
+              <span className="text-3xl sm:text-4xl text-accent">⚖️</span>
             </div>
           </div>
-          <p className="text-white/80 font-light tracking-wide">
+          <p className="text-white/80 text-sm sm:text-base font-light tracking-wide">
             Carregando artigo...
           </p>
         </div>
@@ -299,29 +299,29 @@ export default function Post() {
       <div className="min-h-screen bg-primary">
         <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
         
-        <div className="h-20"></div>
+        <div className="h-24 sm:h-28 md:h-32"></div>
         
-        <div className="flex items-center justify-center px-4 py-20">
+        <div className="flex items-center justify-center px-4 py-16 sm:py-20">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl text-center text-white"
+            className="max-w-2xl text-center text-white px-4"
           >
-            <div className="w-40 h-40 mx-auto mb-8 bg-primary/80 rounded-full flex items-center justify-center border-2 border-accent/30">
-              <span className="text-6xl text-accent">📜</span>
+            <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 mx-auto mb-6 sm:mb-8 bg-primary/80 rounded-full flex items-center justify-center border-2 border-accent/30">
+              <span className="text-4xl sm:text-5xl md:text-6xl text-accent">📜</span>
             </div>
             
-            <h1 className="text-5xl font-bold text-accent mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent mb-3 sm:mb-4">
               Artigo não encontrado
             </h1>
             
-            <p className="text-xl text-white/70 mb-12 font-light">
+            <p className="text-base sm:text-lg md:text-xl text-white/70 mb-8 sm:mb-10 md:mb-12 font-light">
               O artigo que você procura pode ter sido removido ou ainda não foi publicado.
             </p>
 
             <Link
               to="/blog"
-              className="inline-flex items-center gap-3 px-10 py-5 bg-accent text-primary font-bold text-lg hover:bg-accent/90 transition-all shadow-2xl hover:shadow-accent/20 group"
+              className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-accent text-primary font-bold text-sm sm:text-base md:text-lg rounded-full hover:bg-accent/90 transition-all shadow-2xl hover:shadow-accent/20 group"
             >
               <span className="group-hover:-translate-x-1 transition-transform">←</span>
               Voltar para o blog
@@ -343,42 +343,70 @@ export default function Post() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header - FICA ACIMA DA FAIXA AZUL */}
       <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
-      
-      {/* FAIXA AZUL SUPERIOR - COM HEADER SOBREPOSTO */}
-      <div className="bg-primary pt-24 pb-16 border-b border-accent/20">
-        <div className="container-custom text-center text-white">
-          <div className="max-w-3xl mx-auto">
-            <span className="text-accent font-semibold tracking-wider uppercase mb-4 inline-block">
-              DOUTRINA & JURISPRUDÊNCIA
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Artigos Jurídicos
-            </h2>
-            <p className="text-xl text-white/80 font-light">
-              Análises aprofundadas sobre os temas mais relevantes do direito contemporâneo, 
-              elaboradas por especialistas comprometidos com a excelência.
+
+      {/* Faixa Azul - COM GRADIENTE DESDE O TOPO */}
+      <section className="bg-gradient-to-r from-primary to-secondary text-white pt-37 pb-21 md:pb-20 lg:pb-24">
+        <div className="container-custom text-center">
+          <span className="text-accent font-semibold tracking-wider uppercase text-sm mb-3 inline-block">
+            DOUTRINA & JURISPRUDÊNCIA
+          </span>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+            {post.data.title}
+          </h1>
+          {post.data.description && (
+            <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto">
+              {post.data.description}
             </p>
-            <div className="w-20 h-1 bg-accent mx-auto mt-8"></div>
-          </div>
+          )}
+          <div className="w-20 h-1 bg-accent mx-auto mt-6"></div>
         </div>
-      </div>
+      </section>
 
       {/* Conteúdo principal */}
-      <main className="container-custom max-w-4xl py-16">
+      <main className="container-custom max-w-4xl px-4 py-8 sm:py-10 md:py-12 lg:py-16">
+        
         {/* Navegação */}
         <Link
           to="/blog"
-          className="inline-flex items-center gap-2 text-gray-500 hover:text-accent mb-8 transition-colors group"
+          className="inline-flex items-center gap-1 sm:gap-2 text-gray-500 hover:text-accent mb-4 sm:mb-5 md:mb-6 transition-colors group text-sm sm:text-base"
         >
-          <span className="group-hover:-translate-x-1 transition-transform">←</span>
-          Todos os artigos
+          <i className="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+          <span>Todos os artigos</span>
         </Link>
 
-        {/* Imagem de destaque (se houver) */}
+        {/* Metadados */}
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 pb-4 border-b border-gray-200">
+          {post.data.date && (
+            <time className="flex items-center gap-1">
+              <i className="far fa-calendar-alt text-accent"></i>
+              <span>{new Date(post.data.date).toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+              })}</span>
+            </time>
+          )}
+          <span className="hidden sm:inline">•</span>
+          <span className="flex items-center gap-1">
+            <i className="fas fa-gavel text-accent"></i>
+            <span>{post.data.author || `Dr. ${content.siteName}`}</span>
+          </span>
+          <span className="hidden sm:inline">•</span>
+          <span className="flex items-center gap-1">
+            <i className="fas fa-scroll text-accent"></i>
+            <span>{content.oab}</span>
+          </span>
+          <span className="hidden sm:inline">•</span>
+          <span className="flex items-center gap-1">
+            <i className="far fa-clock text-accent"></i>
+            <span>{Math.ceil(post.content.split(' ').length / 200)} min</span>
+          </span>
+        </div>
+
+        {/* Imagem de destaque */}
         {post.data.image && (
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <img
               src={post.data.image}
               alt={post.data.title}
@@ -387,119 +415,76 @@ export default function Post() {
           </div>
         )}
 
-        {/* Cabeçalho do artigo - COM ÍCONES OFICIAIS */}
-        <div className="mb-8">
-          {post.data.category && (
-            <span className="text-sm text-accent font-semibold uppercase tracking-wider">
-              {post.data.category}
-            </span>
-          )}
-          <h1 className="text-4xl md:text-5xl font-bold text-primary mt-2 mb-4">
-            {post.data.title}
-          </h1>
-          {post.data.description && (
-            <p className="text-xl text-gray-600 mb-4 font-light border-l-4 border-accent/30 pl-4">
-              {post.data.description}
-            </p>
-          )}
-          <div className="flex items-center gap-4 text-sm text-gray-500">
-            {post.data.date && (
-              <time className="flex items-center gap-1">
-                <i className="far fa-calendar-alt text-accent"></i>
-                <span>{new Date(post.data.date).toLocaleDateString('pt-BR', {
-                  day: '2-digit',
-                  month: 'long',
-                  year: 'numeric'
-                })}</span>
-              </time>
-            )}
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <i className="fas fa-gavel text-accent"></i>
-              <span>{post.data.author || `Dr. ${content.siteName}`}</span>
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <i className="fas fa-scroll text-accent"></i>
-              <span>{content.oab}</span>
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <i className="far fa-clock text-accent"></i>
-              <span>{Math.ceil(post.content.split(' ').length / 200)} min</span>
-            </span>
-          </div>
-        </div>
-
         {/* Artigo */}
         <article 
           ref={articleRef}
-          className="prose prose-lg max-w-none
+          className="prose prose-sm sm:prose-base lg:prose-lg max-w-none
             prose-headings:text-primary prose-headings:font-bold
-            prose-h1:text-3xl prose-h1:mt-12 prose-h1:mb-6
-            prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
-            prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-            prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-6
+            prose-h1:text-xl sm:prose-h1:text-2xl md:prose-h1:text-3xl prose-h1:mt-6 sm:prose-h1:mt-8 md:prose-h1:mt-10 lg:prose-h1:mt-12 prose-h1:mb-3 sm:prose-h1:mb-4 md:prose-h1:mb-5 lg:prose-h1:mb-6
+            prose-h2:text-lg sm:prose-h2:text-xl md:prose-h2:text-2xl prose-h2:mt-5 sm:prose-h2:mt-6 md:prose-h2:mt-8 lg:prose-h2:mt-10 prose-h2:mb-2 sm:prose-h2:mb-3 md:prose-h2:mb-4
+            prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-3 sm:prose-p:mb-4 md:prose-p:mb-5 lg:prose-p:mb-6 prose-p:text-sm sm:prose-p:text-base
             prose-a:text-accent prose-a:no-underline hover:prose-a:underline
             prose-strong:text-primary
-            prose-ul:list-disc prose-ol:list-decimal
-            prose-blockquote:border-l-4 prose-blockquote:border-accent prose-blockquote:bg-gray-50 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-r-lg
-            prose-img:rounded-lg prose-img:shadow-md
+            prose-ul:list-disc prose-ol:list-decimal prose-li:text-sm sm:prose-li:text-base
+            prose-blockquote:border-l-4 prose-blockquote:border-accent prose-blockquote:bg-gray-50 prose-blockquote:py-2 prose-blockquote:px-3 sm:prose-blockquote:px-4 md:prose-blockquote:px-5 lg:prose-blockquote:px-6 prose-blockquote:rounded-r-lg
+            prose-img:rounded-lg prose-img:shadow-md prose-img:my-4 sm:prose-img:my-5 md:prose-img:my-6
             break-words whitespace-pre-wrap"
         >
           <div dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }} />
         </article>
 
-        {/* Ações do artigo - COM ÍCONES OFICIAIS */}
-        <div className="mt-12 pt-6 border-t border-gray-200 flex justify-between items-center">
+        {/* Ações */}
+        <div className="mt-8 sm:mt-10 md:mt-12 pt-4 sm:pt-5 md:pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+          
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition-colors group"
+            className="inline-flex items-center gap-1 sm:gap-2 text-gray-500 hover:text-accent transition-colors group text-sm sm:text-base"
           >
             <i className="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
             <span>Todos os artigos</span>
           </Link>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            
             {/* Botão Compartilhar */}
             <div className="relative">
               <button
                 onClick={handleShare}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-accent hover:text-accent transition-all shadow-sm"
+                className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white border border-gray-200 rounded-lg hover:border-accent hover:text-accent transition-all shadow-sm text-xs sm:text-sm"
               >
                 <i className="fas fa-share-alt"></i>
-                <span className="hidden sm:inline">Compartilhar</span>
+                <span className="hidden xs:inline">Compartilhar</span>
               </button>
               
-              {/* Menu de compartilhamento - COM ÍCONES OFICIAIS */}
+              {/* Menu de compartilhamento */}
               {showShareMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                <div className="absolute right-0 mt-2 w-36 sm:w-40 md:w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-1 sm:py-2 z-50">
                   <button
                     onClick={copyToClipboard}
-                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-3 transition-colors"
+                    className="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-2 sm:gap-3 transition-colors text-xs sm:text-sm"
                   >
-                    <i className="fas fa-link text-accent w-5"></i>
+                    <i className="fas fa-link text-accent w-4"></i>
                     <span>Copiar link</span>
                   </button>
                   <button
                     onClick={shareOnWhatsApp}
-                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-3 transition-colors"
+                    className="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-2 sm:gap-3 transition-colors text-xs sm:text-sm"
                   >
-                    <i className="fab fa-whatsapp text-accent w-5"></i>
+                    <i className="fab fa-whatsapp text-accent w-4"></i>
                     <span>WhatsApp</span>
                   </button>
                   <button
                     onClick={shareOnLinkedIn}
-                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-3 transition-colors"
+                    className="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-2 sm:gap-3 transition-colors text-xs sm:text-sm"
                   >
-                    <i className="fab fa-linkedin-in text-accent w-5"></i>
+                    <i className="fab fa-linkedin-in text-accent w-4"></i>
                     <span>LinkedIn</span>
                   </button>
                   <button
                     onClick={shareOnTwitter}
-                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-3 transition-colors"
+                    className="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-2 sm:gap-3 transition-colors text-xs sm:text-sm"
                   >
-                    <i className="fab fa-twitter text-accent w-5"></i>
+                    <i className="fab fa-twitter text-accent w-4"></i>
                     <span>Twitter</span>
                   </button>
                 </div>
@@ -509,24 +494,24 @@ export default function Post() {
             {/* Botão Imprimir */}
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-accent hover:text-accent transition-all shadow-sm"
+              className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white border border-gray-200 rounded-lg hover:border-accent hover:text-accent transition-all shadow-sm text-xs sm:text-sm"
             >
               <i className="fas fa-print"></i>
-              <span className="hidden sm:inline">Imprimir</span>
+              <span className="hidden xs:inline">Imprimir</span>
             </button>
           </div>
         </div>
 
         {/* Bio do autor */}
-        <div className="mt-12 p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-              <i className="fas fa-user-tie text-2xl text-accent"></i>
+        <div className="mt-8 sm:mt-10 md:mt-12 p-4 sm:p-5 md:p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+          <div className="flex items-start gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+              <i className="fas fa-user-tie text-xl sm:text-2xl text-accent"></i>
             </div>
             <div>
-              <h4 className="font-bold text-primary mb-1">{content.siteName}</h4>
-              <p className="text-sm text-gray-500 mb-2">{content.oab}</p>
-              <p className="text-gray-600 text-sm">
+              <h4 className="font-bold text-primary mb-1 text-sm sm:text-base">{content.siteName}</h4>
+              <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">{content.oab}</p>
+              <p className="text-gray-600 text-xs sm:text-sm">
                 Advogado especialista em Direito Civil, Trabalhista e Criminal. 
                 Membro da OAB/SP desde 2012, com atuação dedicada e atenção personalizada a cada cliente.
               </p>

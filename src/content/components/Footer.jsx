@@ -8,13 +8,20 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { 
   faInstagram, 
-  faLinkedinIn, 
+  faTiktok, 
   faFacebookF, 
   faWhatsapp 
 } from '@fortawesome/free-brands-svg-icons';
 
 export default function Footer({ siteName, oab, phone, email, address, whatsapp }) {
   const currentYear = new Date().getFullYear();
+
+  // Links das redes sociais (mesmos do Contato.jsx)
+  const socialLinks = {
+    instagram: "https://www.instagram.com/edsonmaltezadvocacia?igsh=cmVtNjUyZHlmZDZ3&utm_source=qr",
+    tiktok: "https://www.tiktok.com/@dr..edson.maltez?_r=1&_t=ZS-94J2UOV6ho8",
+    facebook: "https://www.facebook.com/share/18Evchghd7/?mibextid=wwXIfr"
+  };
 
   return (
     <footer className="bg-[#0B1A33] text-white border-t border-white/10">
@@ -86,7 +93,7 @@ export default function Footer({ siteName, oab, phone, email, address, whatsapp 
             </div>
           </div>
 
-          {/* Coluna 3 - Contato (com ícones oficiais) */}
+          {/* Coluna 3 - Contato */}
           <div className="space-y-3 sm:space-y-4 text-center sm:text-left">
             <h4 className="text-xs sm:text-sm font-semibold text-accent tracking-[0.2em] uppercase">
               Contato
@@ -139,7 +146,7 @@ export default function Footer({ siteName, oab, phone, email, address, whatsapp 
             </ul>
           </div>
 
-          {/* Coluna 4 - Horário e Redes (com ícones oficiais) */}
+          {/* Coluna 4 - Horário e Redes Sociais (CORES OFICIAIS) */}
           <div className="space-y-3 sm:space-y-4 text-center sm:text-left">
             <h4 className="text-xs sm:text-sm font-semibold text-accent tracking-[0.2em] uppercase">
               Atendimento
@@ -147,7 +154,7 @@ export default function Footer({ siteName, oab, phone, email, address, whatsapp 
             <div className="space-y-2 max-w-[200px] mx-auto sm:mx-0">
               <div className="flex justify-between sm:justify-start sm:gap-8 text-xs sm:text-sm text-white/80">
                 <span>Seg a Sex</span>
-                <span className="text-white/60">9h às 18h</span>
+                <span className="text-white/60">9h às 17h</span>
               </div>
               <div className="flex justify-between sm:justify-start sm:gap-8 text-xs sm:text-sm text-white/80">
                 <span>Sáb/Dom</span>
@@ -155,30 +162,46 @@ export default function Footer({ siteName, oab, phone, email, address, whatsapp 
               </div>
             </div>
 
-            {/* Redes Sociais - Ícones Oficiais */}
+            {/* Redes Sociais - Cores Oficiais (sem hover para cor principal) */}
             <div className="pt-4 sm:pt-6">
               <h5 className="text-[10px] sm:text-xs text-white/40 mb-2 sm:mb-3 tracking-wider">SIGA-NOS</h5>
               <div className="flex justify-center sm:justify-start gap-2 sm:gap-3">
+                {/* Instagram - Gradiente oficial */}
                 <a
-                  href="#"
-                  className="w-8 h-8 sm:w-10 sm:h-10 bg-white/5 rounded-lg flex items-center justify-center text-white/60 hover:bg-accent hover:text-primary transition-all"
+                  href={socialLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-white transition-all hover:scale-110 hover:shadow-lg"
+                  style={{
+                    background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)'
+                  }}
                   aria-label="Instagram"
                 >
-                  <FontAwesomeIcon icon={faInstagram} className="text-sm sm:text-base lg:text-lg" />
+                  <FontAwesomeIcon icon={faInstagram} className="text-sm sm:text-base" />
                 </a>
+
+                {/* TikTok - Preto oficial */}
                 <a
-                  href="#"
-                  className="w-8 h-8 sm:w-10 sm:h-10 bg-white/5 rounded-lg flex items-center justify-center text-white/60 hover:bg-accent hover:text-primary transition-all"
-                  aria-label="LinkedIn"
+                  href={socialLinks.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-white transition-all hover:scale-110 hover:shadow-lg"
+                  style={{ backgroundColor: '#000000' }}
+                  aria-label="TikTok"
                 >
-                  <FontAwesomeIcon icon={faLinkedinIn} className="text-sm sm:text-base lg:text-lg" />
+                  <FontAwesomeIcon icon={faTiktok} className="text-sm sm:text-base" />
                 </a>
+
+                {/* Facebook - Azul oficial */}
                 <a
-                  href="#"
-                  className="w-8 h-8 sm:w-10 sm:h-10 bg-white/5 rounded-lg flex items-center justify-center text-white/60 hover:bg-accent hover:text-primary transition-all"
+                  href={socialLinks.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-white transition-all hover:scale-110 hover:shadow-lg"
+                  style={{ backgroundColor: '#1877f2' }}
                   aria-label="Facebook"
                 >
-                  <FontAwesomeIcon icon={faFacebookF} className="text-sm sm:text-base lg:text-lg" />
+                  <FontAwesomeIcon icon={faFacebookF} className="text-sm sm:text-base" />
                 </a>
               </div>
             </div>
